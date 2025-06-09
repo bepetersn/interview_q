@@ -1,8 +1,11 @@
 import pytest
 import json
 import os
+import logging
 from django.core.management import call_command
 from apps.core.models import Question
+
+logger = logging.getLogger(__name__)
 
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000/api")
 
@@ -60,7 +63,7 @@ def test_create_and_verify_question_log(
     payload["question"] = question1_id if expected_title == "Two Sum" else question2_id
 
     # Log the payload being sent
-    print(f"Payload being sent: {json.dumps(payload, indent=2)}")
+    logger.info("Payload being sent: %s", json.dumps(payload, indent=2))
 
     # Ensure the 'question' field is included
     assert (
@@ -73,7 +76,7 @@ def test_create_and_verify_question_log(
     )
 
     # Log the response received
-    print(f"Response received: {response.status} - {response.text}")
+    logger.info("Response received: %s - %s", response.status, response.text)
 
     assert response.status == 201
 
