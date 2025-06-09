@@ -20,9 +20,12 @@ class QuestionLogListCreateView(generics.ListCreateAPIView):
             serializer.is_valid(raise_exception=True)
             response = super().create(request, *args, **kwargs)
             logger.debug(f"Response object: {response}")
-        except Exception as e:
-            logger.error(f"Exception during create: {e}")
-            return Response({"error": str(e)}, status=500)
+        except serializers.ValidationError as exc:
+            logger.warning(f"Validation error creating QuestionLog: {exc}")
+            return Response(exc.detail, status=400)
+        except Exception as exc:
+            logger.error(f"Unexpected error creating QuestionLog: {exc}")
+            return Response({"error": str(exc)}, status=500)
         if response.status_code != 201:
             logger.error(f"Error creating QuestionLog: {response.data}")
         return response
@@ -53,9 +56,12 @@ class TagListCreateView(generics.ListCreateAPIView):
             serializer.is_valid(raise_exception=True)
             response = super().create(request, *args, **kwargs)
             logger.debug(f"Response object: {response}")
-        except Exception as e:
-            logger.error(f"Exception during create: {e}")
-            return Response({"error": str(e)}, status=500)
+        except serializers.ValidationError as exc:
+            logger.warning(f"Validation error creating Tag: {exc}")
+            return Response(exc.detail, status=400)
+        except Exception as exc:
+            logger.error(f"Unexpected error creating Tag: {exc}")
+            return Response({"error": str(exc)}, status=500)
         if response.status_code != 201:
             logger.error(f"Error creating Tag: {response.data}")
         return response
