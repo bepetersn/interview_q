@@ -10,7 +10,7 @@ class QuestionLogAdmin(admin.ModelAdmin):
     def formatted_date_attempted(self, obj):
         return localtime(obj.date_attempted).date()
 
-    readonly_fields = ("formatted_date_attempted", "formatted_last_reviewed")
+    readonly_fields = ("formatted_date_attempted",)
 
 
 # Commenting out QuestionAdmin temporarily to resolve migration issues
