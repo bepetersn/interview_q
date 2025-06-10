@@ -48,3 +48,11 @@ This document describes the backend architecture and design for the Interview Qu
 
 - **Fix missing package initialization for q_admin**: Add an `__init__.py` file in `apps/q_admin/` or adjust `INSTALLED_APPS` if the module isn’t used. Ensure Django can import the admin customizations properly.
 - **Remove or consolidate duplicate q_admin directories**: Determine whether `q_admin/admin.py` at the project root or `apps/q_admin/admin.py` is the correct implementation. Remove the unused folder and update imports accordingly.
+
+## Authentication Workflow
+
+The API now requires a logged‑in user for all core endpoints. Users can be
+created via `/api/auth/register/` by POSTing a `username` and `password`.
+To obtain a session, POST the same credentials to `/api/auth/login/`.
+After logging in, requests to `/api/questions/`, `/api/questionlogs/` and
+`/api/tags/` will operate only on data belonging to that user.

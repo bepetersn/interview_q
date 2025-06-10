@@ -1,4 +1,4 @@
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 import logging
@@ -9,13 +9,25 @@ logger = logging.getLogger(__name__)
 
 
 class QuestionLogViewSet(viewsets.ModelViewSet):
-    queryset = QuestionLog.objects.all()
     serializer_class = QuestionLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return QuestionLog.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class QuestionLogListCreateView(generics.ListCreateAPIView):
-    queryset = QuestionLog.objects.all()
     serializer_class = QuestionLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return QuestionLog.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         logger.info("Entering the create method")
@@ -37,8 +49,11 @@ class QuestionLogListCreateView(generics.ListCreateAPIView):
 
 
 class QuestionLogRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = QuestionLog.objects.all()
     serializer_class = QuestionLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return QuestionLog.objects.filter(user=self.request.user)
 
     def update(self, request, *args, **kwargs):
         logger.info("Entering the update method for QuestionLog")

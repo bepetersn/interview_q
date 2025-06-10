@@ -4,6 +4,7 @@ import os
 import logging
 from backend.core.models import Question
 from django.test import Client
+from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -14,20 +15,27 @@ API_URL = os.getenv("API_URL", "http://127.0.0.1:8000/api")
 
 
 @pytest.fixture()
-def setup_questions(db):
+def user(db):
+    return User.objects.create_user(username="tester", password="pass")
+
+
+@pytest.fixture()
+def setup_questions(db, user):
     # Create or retrieve questions with expected titles
     question1, _ = Question.objects.get_or_create(
-        title="Two Sum", defaults={"slug": "two-sum"}
+        title="Two Sum", user=user, defaults={"slug": "two-sum"}
     )
     question2, _ = Question.objects.get_or_create(
-        title="Binary Search", defaults={"slug": "binary-search"}
+        title="Binary Search", user=user, defaults={"slug": "binary-search"}
     )
     return question1.pk, question2.pk
 
 
 @pytest.fixture()
-def client():
-    return Client()
+def client(user):
+    client = Client()
+    client.login(username="tester", password="pass")
+    return client
 
 
 @pytest.mark.parametrize(
@@ -94,3 +102,24 @@ def test_update_nonexistent_question_log(client, nonexistent_id):
         content_type="application/json",
     )
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_list_scoped_to_user(client, user, setup_questions):
+    q1, _ = setup_questions
+    payload = {
+        "question": q1,
+        "time_spent_min": 10,
+    }
+    client.post("/api/questionlogs/", data=json.dumps(payload), content_type="application/json")
+
+    # create log for another user
+    other = User.objects.create_user(username="other", password="pass")
+    other_client = Client()
+    other_client.login(username="other", password="pass")
+    payload["question"] = q1
+    other_client.post("/api/questionlogs/", data=json.dumps(payload), content_type="application/json")
+
+    response = client.get("/api/questionlogs/")
+    assert response.status_code == 200
+    assert len(response.json()) == 1

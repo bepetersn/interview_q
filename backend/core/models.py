@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.conf import settings
 import hashlib
 
 
@@ -17,6 +18,12 @@ class Tag(models.Model):
     is_active = models.BooleanField(
         default=True, help_text="Indicates if the tag is active"
     )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="tags",
+        null=True,
+    )
 
     class Meta:
         ordering = ["name"]
@@ -28,6 +35,13 @@ class Tag(models.Model):
 class Question(models.Model):
 
     # Intrinsic / Essential data
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="questions",
+        null=True,
+    )
 
     title = models.CharField(max_length=255)
     source = models.CharField(
@@ -94,6 +108,12 @@ class Question(models.Model):
 
 
 class QuestionLog(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="question_logs",
+        null=True,
+    )
     question = models.ForeignKey(
         Question, on_delete=models.CASCADE, related_name="logs"
     )

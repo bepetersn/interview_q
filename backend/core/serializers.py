@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model, authenticate
 from rest_framework import serializers
 from .models import Question, QuestionLog, Tag
 
@@ -5,13 +6,15 @@ from .models import Question, QuestionLog, Tag
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ["id", "name"]
+        fields = ["id", "name", "user"]
+        read_only_fields = ["user"]
 
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = "__all__"
+        read_only_fields = ["user"]
 
 
 class QuestionLogSerializer(serializers.ModelSerializer):
@@ -22,6 +25,7 @@ class QuestionLogSerializer(serializers.ModelSerializer):
         model = QuestionLog
         fields = [
             "id",
+            "user",
             "question",
             "title",
             "date_attempted",
@@ -30,3 +34,32 @@ class QuestionLogSerializer(serializers.ModelSerializer):
             "solution_approach",
             "self_notes",
         ]
+        read_only_fields = ["user"]
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ("id", "username", "password")
+
+    def create(self, validated_data):
+        return get_user_model().objects.create_user(
+            username=validated_data["username"],
+            password=validated_data["password"],
+        )
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        user = authenticate(
+            username=attrs.get("username"), password=attrs.get("password")
+        )
+        if not user:
+            raise serializers.ValidationError("Invalid credentials")
+        attrs["user"] = user
+        return attrs

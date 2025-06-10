@@ -1,22 +1,31 @@
 import pytest
 import json
 from django.test import Client
+from django.contrib.auth.models import User
 
 
-@pytest.fixture(scope="module")
-def client():
-    return Client()
+@pytest.fixture()
+def user(db):
+    return User.objects.create_user(username="tester", password="pass")
+
+
+@pytest.fixture()
+def client(user):
+    client = Client()
+    client.login(username="tester", password="pass")
+    return client
 
 
 def _create_questionlog_and_dependencies(client):
     # Ensure a question exists for the foreign key
     question_payload = {"title": "Test Q", "slug": "test-q", "difficulty": "Easy"}
-    client.post(
+    resp = client.post(
         "/api/questions/",
         data=json.dumps(question_payload),
         content_type="application/json",
     )
-    create_payload = {"title": "Original Question", "difficulty": "Easy", "question": 1}
+    question_id = resp.json()["id"]
+    create_payload = {"title": "Original Question", "difficulty": "Easy", "question": question_id}
     client.post(
         "/api/questionlogs/",
         data=json.dumps(create_payload),
@@ -82,6 +91,31 @@ def test_list_views(client, endpoint, method, expected_status):
     else:
         response = client.post(endpoint)
     assert response.status_code == expected_status
+
+
+@pytest.mark.django_db
+def test_user_scoped_list(client):
+    _create_questionlog_and_dependencies(client)
+    from django.contrib.auth.models import User
+
+    other = User.objects.create_user(username="other", password="pass")
+    other_client = Client()
+    other_client.login(username="other", password="pass")
+    question_payload = {"title": "Q2", "slug": "q2", "difficulty": "Easy"}
+    resp = other_client.post(
+        "/api/questions/",
+        data=json.dumps(question_payload),
+        content_type="application/json",
+    )
+    other_client.post(
+        "/api/questionlogs/",
+        data=json.dumps({"question": resp.json()["id"]}),
+        content_type="application/json",
+    )
+
+    response = client.get("/api/questionlogs/")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
 
 
 @pytest.mark.django_db
