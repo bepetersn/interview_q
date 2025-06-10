@@ -190,3 +190,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API documentation for the Interview Questions app",
     "VERSION": "1.0.0",
 }
+
+# Load CORS_ALLOWED_ORIGINS from environment variable if set
+if env_origins := os.environ.get("CORS_ALLOWED_ORIGINS"):
+    CORS_ALLOWED_ORIGINS.extend([o.strip() for o in env_origins.split(",") if o.strip()])
