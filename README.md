@@ -47,3 +47,18 @@ For more details on backend structure, configuration, and contributor notes, see
 ## Privacy Policy
 
 See [`docs/privacy_policy.md`](docs/privacy_policy.md) for information on how question data and logs are stored, retained, and deleted.
+
+## Deployment
+
+You can deploy the Django API to **AWS** and the Vite/React frontend to **Vercel**.
+
+1. **Backend (AWS)**
+   - `requirements.txt` already includes `gunicorn`, `whitenoise`, and `django-cors-headers`.
+   - Set environment variables from `.env.example` (e.g., `DJANGO_SECRET_KEY`).
+   - Deploy with `git push heroku main` and run `python manage.py migrate`.
+
+2. **Frontend (Vercel)**
+   - Build with `npm run build` in the `frontend/` folder.
+   - Configure Vercel to use `frontend/dist` as the output directory and set `VITE_API_BASE_URL` to the Heroku API URL.
+
+After deployment, the frontend will call the Heroku-hosted API using the configured base URL. See `docs/deployment.md` for full details.

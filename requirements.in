@@ -1,4 +1,10 @@
 django
 djangorestframework
 requests
+<<<<<<< HEAD
 drf-spectacular
+=======
+gunicorn
+whitenoise
+django-cors-headers
+>>>>>>> 20f7797 (Add deployment configuration)
