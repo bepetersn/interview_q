@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+import hashlib
 
 
 class Tag(models.Model):
@@ -16,20 +17,12 @@ class Tag(models.Model):
     is_active = models.BooleanField(
         default=True, help_text="Indicates if the tag is active"
     )
-    slug = models.SlugField(
-        max_length=50, unique=True, help_text="URL-friendly identifier for the tag"
-    )
 
     class Meta:
         ordering = ["name"]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.slug:
-            self.slug = slugify(self.name)
-
     def __str__(self):
-        return f"{self.name} [{self.slug}]"
+        return f"{self.name}"
 
 
 class Question(models.Model):
@@ -38,19 +31,17 @@ class Question(models.Model):
 
     title = models.CharField(max_length=255)
     source = models.CharField(
-        max_length=100,
+        max_length=4095,
         null=True,
         blank=True,
         help_text="e.g., LeetCode, personal interview",
     )
-    description = models.TextField(
+    notes = models.TextField(
         null=True, blank=True, help_text="Detailed description of the question"
     )
     slug = models.SlugField(
         max_length=255,
         unique=True,
-        null=True,
-        blank=True,
         help_text="URL-friendly identifier for the question",
     )
     difficulty = models.CharField(
@@ -89,9 +80,14 @@ class Question(models.Model):
         ordering = ["-created_at", "title"]
 
     def __init__(self, *args, **kwargs):
+        # Remove slug from kwargs to prevent user-supplied slug
+        kwargs.pop('slug', None)
         super().__init__(*args, **kwargs)
-        if not self.slug:
-            self.slug = slugify(self.title)
+        if not self.slug and self.title:
+            base_slug = slugify(self.title)
+            # Add a hash to ensure uniqueness
+            hash_suffix = hashlib.sha1(self.title.encode('utf-8')).hexdigest()[:8]
+            self.slug = f"{base_slug}-{hash_suffix}"
 
     def __str__(self):
         return f"{self.title} [{self.slug}]"
@@ -106,7 +102,7 @@ class QuestionLog(models.Model):
         null=True, blank=True, help_text="Time spent in minutes"
     )
     outcome = models.CharField(
-        max_length=7,
+        max_length=40,
         choices=[("Solved", "Solved"), ("Partial", "Partial"), ("Failed", "Failed")],
         null=True,
         blank=True,

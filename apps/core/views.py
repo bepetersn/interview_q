@@ -39,7 +39,6 @@ class QuestionLogRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView
     def update(self, request, *args, **kwargs):
         logger.info("Entering the update method for QuestionLog")
         logger.debug(f"Incoming payload: {request.data}")
-        import pdb; pdb.set_trace()
         try:
             # Check if the instance exists, return 404 if not
             try:
@@ -94,11 +93,6 @@ class TagListCreateView(generics.ListCreateAPIView):
         return response
 
 
-class TagRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-
-
 class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
@@ -123,3 +117,8 @@ class QuestionListCreateView(generics.ListCreateAPIView):
                 return Response({"error": str(e)}, status=400)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+
+class TagRetrieveDestroyView(generics.RetrieveDestroyAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer

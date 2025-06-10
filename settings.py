@@ -41,9 +41,11 @@ INSTALLED_APPS = [
     "rest_framework",
     "apps.core",
     "apps.q_admin",
+    "corsheaders",  # Added for CORS
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # Added for CORS (must be first)
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -153,3 +155,10 @@ LOGGING = {
         # },
     },
 }
+
+# CORS settings for local frontend
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]

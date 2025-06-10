@@ -4,7 +4,7 @@ from .views import (
     QuestionLogListCreateView,
     QuestionLogRetrieveUpdateDestroyView,
     TagListCreateView,
-    TagRetrieveUpdateDestroyView,
+    TagRetrieveDestroyView,  # Use the new destroy-only view
     QuestionViewSet,
     QuestionLogViewSet,
     QuestionListCreateView,
@@ -27,7 +27,7 @@ urlpatterns = [
         name="questionlog-detail",
     ),
     path("tags/", TagListCreateView.as_view(), name="tag-list-create"),
-    path("tags/<int:pk>/", TagRetrieveUpdateDestroyView.as_view(), name="tag-detail"),
+    path("tags/<int:pk>/", TagRetrieveDestroyView.as_view(), name="tag-detail"),
 ]
 
 urlpatterns += router.urls

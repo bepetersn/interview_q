@@ -74,25 +74,34 @@ def test_list_views(client, endpoint, method, expected_status):
     [
         (
             "/api/questionlogs/1/",
-            {"title": "Updated Question", "difficulty": "Medium"},
+            {
+                # Only fields allowed to be updated on QuestionLog
+                "question": 1,  # required field
+                "date_attempted": "2025-06-10",
+                "time_spent_min": 42,
+                "outcome": "Solved",
+                "solution_approach": "Refactor",
+                "self_notes": "Updated log notes."
+            },
             200,
         ),
-        ("/api/tags/1/", {"name": "Updated Tag"}, 200),
+        # Remove tag update test, as tag update is no longer supported
     ],
 )
 def test_update_views(client, endpoint, payload, expected_status):
     if endpoint.startswith("/api/questionlogs/"):
         _create_questionlog_and_dependencies(client)
-    elif endpoint.startswith("/api/tags/"):
-        _create_tag(client)
     response = client.put(endpoint, data=json.dumps(payload), content_type="application/json")
     if endpoint.startswith("/api/questionlogs/"):
         get_response = client.get(endpoint)
         assert get_response.status_code == 200
         data = get_response.json()
-        # TODO: Not sure why, but not working as expected
         for key, value in payload.items():
-            assert data[key] == value
+            if key == "date_attempted":
+                # The API returns ISO datetime, but the test payload is a date string
+                assert data[key].startswith(value)
+            else:
+                assert data[key] == value
     assert response.status_code == expected_status
 
 
