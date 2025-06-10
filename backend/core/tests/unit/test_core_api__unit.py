@@ -129,6 +129,7 @@ def test_update_views(client, endpoint, payload, expected_status):
     [
         ("/api/questionlogs/1/", 204),
         ("/api/tags/1/", 204),
+        ("/api/questions/1/", 204),
     ],
 )
 def test_delete_views(client, endpoint, expected_status):
@@ -136,6 +137,16 @@ def test_delete_views(client, endpoint, expected_status):
         _create_questionlog_and_dependencies(client)
     elif endpoint.startswith("/api/tags/"):
         _create_tag(client)
+    elif endpoint.startswith("/api/questions/"):
+        question_payload = {
+            "title": "Delete Me",
+            "slug": "delete-me",
+        }
+        client.post(
+            "/api/questions/",
+            data=json.dumps(question_payload),
+            content_type="application/json",
+        )
     response = client.delete(endpoint)
     assert response.status_code == expected_status
 

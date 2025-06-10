@@ -43,3 +43,7 @@ This project is a full-stack application for managing programming interview ques
 ---
 
 For more details on backend structure, configuration, and contributor notes, see the documentation in the `docs/` directory.
+
+## Privacy Policy
+
+See [`docs/privacy_policy.md`](docs/privacy_policy.md) for information on how question data and logs are stored, retained, and deleted.

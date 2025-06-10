@@ -44,6 +44,16 @@ This document describes the backend architecture and design for the Interview Qu
 4. **Run `create_fake_data`** via `python manage.py create_fake_data` to populate example data for local testing.
 5. **Consider cleaning up the admin modules**—decide whether the root `q_admin/` folder or `apps/q_admin/` is the intended location and remove duplicates.
 
+## Deletion Endpoints
+
+The API supports deleting questions, logs and tags via REST calls:
+
+- `DELETE /api/questions/<id>/` removes a question and any related `QuestionLog` records.
+- `DELETE /api/questionlogs/<id>/` removes a single log entry.
+- `DELETE /api/tags/<id>/` removes a tag.
+
+These routes are covered by the tests in `backend/core/tests` to verify proper database cleanup.
+
 ## Possible Follow-ups
 
 - **Fix missing package initialization for q_admin**: Add an `__init__.py` file in `apps/q_admin/` or adjust `INSTALLED_APPS` if the module isn’t used. Ensure Django can import the admin customizations properly.
