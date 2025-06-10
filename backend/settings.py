@@ -180,3 +180,13 @@ SPECTACULAR_SETTINGS = {
 }
 if env_origins := os.environ.get("CORS_ALLOWED_ORIGINS"):
     CORS_ALLOWED_ORIGINS.extend([o.strip() for o in env_origins.split(",") if o.strip()])
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Interview Questions API",
+    "DESCRIPTION": "API documentation for the Interview Questions app",
+    "VERSION": "1.0.0",
+}
