@@ -7,6 +7,7 @@ from .views.question_log import (
 )
 from .views.question import QuestionViewSet, QuestionListCreateView
 from .views.tag import TagListCreateView, TagRetrieveDestroyView
+from .views.import_api import ImportAPIView
 
 
 router = DefaultRouter()
@@ -27,6 +28,7 @@ urlpatterns = [
     ),
     path("tags/", TagListCreateView.as_view(), name="tag-list-create"),
     path("tags/<int:pk>/", TagRetrieveDestroyView.as_view(), name="tag-detail"),
+    path("import/<str:platform>/", ImportAPIView.as_view(), name="import-platform"),
 ]
 
 urlpatterns += router.urls

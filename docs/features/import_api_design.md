@@ -72,3 +72,18 @@
 
 **Summary:**
 The import API is designed to let users easily bring in their coding activity from various platforms, with robust validation, error handling, and extensibility for future platforms. The flow is simple and user-centric, focusing on a smooth import experience.
+
+## Implementation Notes
+
+The `/import/<platform>/` endpoint is provided by `ImportAPIView`. The view
+validates a `username` field and then enqueues an asynchronous task by
+publishing a message to an AWS SQS queue. Tasks are defined in
+`backend/infrastructure/tasks.py` and executed by a Lambda function (see
+`infra/lambda/handler.py`). The queue URL is configured via the
+`IMPORT_QUEUE_URL` setting so local development can skip SQS and run tasks
+synchronously when the variable is unset.
+
+Background tasks fetch data from the target platform (initially Codewars) and
+create `Question` and `QuestionLog` records. The worker includes basic rate
+limiting with a short `sleep()` call and logs any errors returned from the
+remote API so they surface in the Lambda logs.
