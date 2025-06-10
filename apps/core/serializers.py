@@ -16,12 +16,14 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 class QuestionLogSerializer(serializers.ModelSerializer):
     question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
+    title = serializers.ReadOnlyField(source="question.title")
 
     class Meta:
         model = QuestionLog
         fields = [
             "id",
             "question",
+            "title",
             "date_attempted",
             "time_spent_min",
             "outcome",

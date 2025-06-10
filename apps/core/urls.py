@@ -10,8 +10,6 @@ from .views import (
     QuestionListCreateView,
 )
 
-app_name = "your_app_name"  # <-- Add this line
-
 router = DefaultRouter()
 router.register(r"questions", QuestionViewSet, basename="question")
 router.register(r"questionlogs", QuestionLogViewSet, basename="questionlog")
