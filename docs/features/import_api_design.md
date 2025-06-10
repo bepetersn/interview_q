@@ -1,5 +1,7 @@
 # Import API Design Overview
 
+*This design is aspirational—the actual import API and its background task infrastructure have not been implemented yet.*
+
 ## Functional Requirements
 
 1. **Import Question Logs from Coding Platforms**

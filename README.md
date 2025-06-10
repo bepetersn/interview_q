@@ -7,7 +7,7 @@ This project is a full-stack application for managing programming interview ques
 - **Backend:**
   - Built with Django and Django REST Framework (DRF).
   - Provides a RESTful API for managing questions, tags, and user activity logs.
-  - Supports importing question logs from external coding platforms (e.g., Codewars).
+  - Planned support for importing question logs from external coding platforms (see `docs/import_api_design.md`).
   - Includes robust testing, data seeding, and admin customization.
   - See `docs/backend_design.md` and `docs/import_api_design.md` for detailed backend and API design.
 
@@ -15,7 +15,7 @@ This project is a full-stack application for managing programming interview ques
   - Built with React and Material UI, using Vite for fast development.
   - Allows users to view, add, edit, and delete questions, tags, and logs.
   - Supports tag management and question filtering.
-  - Provides a user-friendly interface for importing activity from supported coding platforms.
+  - A user-friendly import interface is planned once backend support is implemented.
 
 ## Getting Started
 

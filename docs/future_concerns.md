@@ -12,9 +12,10 @@ This document outlines potential areas for improvement, future enhancements, and
 - Standardize error feedback in the frontend (e.g., toast notifications, inline messages) for a more user-friendly experience.
 - Consider adding onboarding flows or help tips for new users, especially for the import feature.
 
-### 3. API Rate Limiting & Background Processing
-- Implement rate limiting or background jobs for import operations to avoid timeouts and external API bans.
-- Consider making imports asynchronous if they may be slow or unreliable.
+### 3. Import API & Background Processing
+- Build the import API endpoints for pulling logs from coding platforms (this feature is not implemented yet).
+- Implement background job infrastructure so long-running imports can run asynchronously.
+- Add rate limiting to avoid timeouts and external API bans.
 
 ### 4. Frontend State Management
 - If the app grows, introduce a global state manager (e.g., Redux, Zustand, or React Context) for better scalability and maintainability.
@@ -44,3 +45,5 @@ This document outlines potential areas for improvement, future enhancements, and
 ---
 
 Addressing these areas will help ensure the application remains robust, scalable, and user-friendly as it evolves.
+
+See [prioritized_tasks.md](prioritized_tasks.md) for a proposed task breakdown and relative priorities.
