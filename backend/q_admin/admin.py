@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.core.models import Tag
+from backend.core.models import Tag
 
 
 @admin.register(Tag)

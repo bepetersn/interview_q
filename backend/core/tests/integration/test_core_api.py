@@ -2,7 +2,7 @@ import pytest
 import json
 import os
 import logging
-from apps.core.models import Question
+from backend.core.models import Question
 from django.test import Client
 
 logger = logging.getLogger(__name__)

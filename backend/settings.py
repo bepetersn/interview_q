@@ -38,9 +38,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
-    "apps.core",
-    "apps.q_admin",
+    "backend.core",
+    "backend.q_admin",
     "corsheaders",  # Added for CORS
 ]
 
@@ -55,7 +54,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "urls"
+ROOT_URLCONF = "backend.urls"
 
 TEMPLATES = [
     {
@@ -72,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "wsgi.application"
+WSGI_APPLICATION = "backend.wsgi.application"
 
 
 # Database
@@ -143,7 +142,7 @@ LOGGING = {
         "level": "INFO",
     },
     "loggers": {
-        "apps.core.views": {
+        "backend.core.views": {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": False,

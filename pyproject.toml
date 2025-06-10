@@ -5,3 +5,7 @@ exclude = '''
     | __pycache__
 )/
 '''
+
+[tool.pytest.ini_options]
+django_find_project = false
+django_settings_module = "backend.settings"

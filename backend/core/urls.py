@@ -1,14 +1,13 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .views import (
+from .views.question_log import (
     QuestionLogListCreateView,
     QuestionLogRetrieveUpdateDestroyView,
-    TagListCreateView,
-    TagRetrieveDestroyView,  # Use the new destroy-only view
-    QuestionViewSet,
     QuestionLogViewSet,
-    QuestionListCreateView,
 )
+from .views.question import QuestionViewSet, QuestionListCreateView
+from .views.tag import TagListCreateView, TagRetrieveDestroyView
+
 
 router = DefaultRouter()
 router.register(r"questions", QuestionViewSet, basename="question")
