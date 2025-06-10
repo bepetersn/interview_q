@@ -81,12 +81,12 @@ class Question(models.Model):
 
     def __init__(self, *args, **kwargs):
         # Remove slug from kwargs to prevent user-supplied slug
-        kwargs.pop('slug', None)
+        kwargs.pop("slug", None)
         super().__init__(*args, **kwargs)
         if not self.slug and self.title:
             base_slug = slugify(self.title)
             # Add a hash to ensure uniqueness
-            hash_suffix = hashlib.sha1(self.title.encode('utf-8')).hexdigest()[:8]
+            hash_suffix = hashlib.sha1(self.title.encode("utf-8")).hexdigest()[:8]
             self.slug = f"{base_slug}-{hash_suffix}"
 
     def __str__(self):
@@ -119,7 +119,6 @@ class QuestionLog(models.Model):
 
     def __str__(self):
         date_str = (
-            self.date_attempted.strftime('%Y-%m-%d')
-            if self.date_attempted else 'N/A'
+            self.date_attempted.strftime("%Y-%m-%d") if self.date_attempted else "N/A"
         )
         return f"{self.question.title} ({self.outcome}) - {date_str}"

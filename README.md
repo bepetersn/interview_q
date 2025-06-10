@@ -53,4 +53,3 @@ Add an `__init__.py` file in `apps/q_admin/` or adjust `INSTALLED_APPS` if the m
 :::task-stub{title="Remove or consolidate duplicate q_admin directories"}
 Determine whether `q_admin/admin.py` at the project root or `apps/q_admin/admin.py` is the correct implementation. Remove the unused folder and update imports accordingly.
 :::
-

@@ -12,6 +12,7 @@ API_URL = os.getenv("API_URL", "http://127.0.0.1:8000/api")
 
 # Ensure valid test data setup
 
+
 @pytest.fixture()
 def setup_questions(db):
     # Create or retrieve questions with expected titles
@@ -55,13 +56,19 @@ def client():
     ],
 )
 @pytest.mark.django_db
-def test_create_and_verify_question_log(client, setup_questions, payload, expected_title):
+def test_create_and_verify_question_log(
+    client, setup_questions, payload, expected_title
+):
     question1_id, question2_id = setup_questions
     payload = dict(payload)
     payload["question"] = question1_id if expected_title == "Two Sum" else question2_id
     logger.info("Payload being sent: %s", json.dumps(payload, indent=2))
-    assert ("question" in payload and payload["question"] is not None), "The 'question' field is missing or None in the payload."
-    response = client.post(f"/api/questionlogs/", data=json.dumps(payload), content_type="application/json")
+    assert (
+        "question" in payload and payload["question"] is not None
+    ), "The 'question' field is missing or None in the payload."
+    response = client.post(
+        "/api/questionlogs/", data=json.dumps(payload), content_type="application/json"
+    )
     logger.info("Response received: %s - %s", response.status_code, response.content)
     assert response.status_code == 201
     question_log_id = response.json().get("id")
@@ -81,5 +88,9 @@ def test_create_and_verify_question_log(client, setup_questions, payload, expect
 @pytest.mark.django_db
 def test_update_nonexistent_question_log(client, nonexistent_id):
     update_payload = {"title": "Nonexistent Log", "difficulty": "Hard"}
-    response = client.patch(f"/api/questionlogs/{nonexistent_id}/", data=json.dumps(update_payload), content_type="application/json")
+    response = client.patch(
+        f"/api/questionlogs/{nonexistent_id}/",
+        data=json.dumps(update_payload),
+        content_type="application/json",
+    )
     assert response.status_code == 404

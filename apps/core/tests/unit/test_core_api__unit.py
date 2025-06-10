@@ -11,14 +11,24 @@ def client():
 def _create_questionlog_and_dependencies(client):
     # Ensure a question exists for the foreign key
     question_payload = {"title": "Test Q", "slug": "test-q", "difficulty": "Easy"}
-    client.post("/api/questions/", data=json.dumps(question_payload), content_type="application/json")
+    client.post(
+        "/api/questions/",
+        data=json.dumps(question_payload),
+        content_type="application/json",
+    )
     create_payload = {"title": "Original Question", "difficulty": "Easy", "question": 1}
-    client.post("/api/questionlogs/", data=json.dumps(create_payload), content_type="application/json")
+    client.post(
+        "/api/questionlogs/",
+        data=json.dumps(create_payload),
+        content_type="application/json",
+    )
 
 
 def _create_tag(client):
     create_payload = {"name": "Original Tag"}
-    client.post("/api/tags/", data=json.dumps(create_payload), content_type="application/json")
+    client.post(
+        "/api/tags/", data=json.dumps(create_payload), content_type="application/json"
+    )
 
 
 @pytest.mark.django_db
@@ -37,9 +47,13 @@ def test_create_views(client, endpoint, payload, expected_status):
         question_payload = {
             "title": "Test Question for Log",
             "slug": "test-question-for-log",
-            "difficulty": "Easy"
+            "difficulty": "Easy",
         }
-        question_response = client.post("/api/questions/", data=json.dumps(question_payload), content_type="application/json")
+        question_response = client.post(
+            "/api/questions/",
+            data=json.dumps(question_payload),
+            content_type="application/json",
+        )
         assert question_response.status_code == 201
         question_id = question_response.json()["id"]
         payload = dict(payload)
@@ -48,7 +62,9 @@ def test_create_views(client, endpoint, payload, expected_status):
     if endpoint == "/api/tags/" and expected_status == 201 and "name" not in payload:
         payload = dict(payload)
         payload["name"] = "Auto Tag"
-    response = client.post(endpoint, data=json.dumps(payload), content_type="application/json")
+    response = client.post(
+        endpoint, data=json.dumps(payload), content_type="application/json"
+    )
     assert response.status_code == expected_status
 
 
@@ -81,7 +97,7 @@ def test_list_views(client, endpoint, method, expected_status):
                 "time_spent_min": 42,
                 "outcome": "Solved",
                 "solution_approach": "Refactor",
-                "self_notes": "Updated log notes."
+                "self_notes": "Updated log notes.",
             },
             200,
         ),
@@ -91,7 +107,9 @@ def test_list_views(client, endpoint, method, expected_status):
 def test_update_views(client, endpoint, payload, expected_status):
     if endpoint.startswith("/api/questionlogs/"):
         _create_questionlog_and_dependencies(client)
-    response = client.put(endpoint, data=json.dumps(payload), content_type="application/json")
+    response = client.put(
+        endpoint, data=json.dumps(payload), content_type="application/json"
+    )
     if endpoint.startswith("/api/questionlogs/"):
         get_response = client.get(endpoint)
         assert get_response.status_code == 200
@@ -133,7 +151,9 @@ def test_delete_views(client, endpoint, expected_status):
     ],
 )
 def test_create_question_api(client, endpoint, payload, expected_status):
-    response = client.post(endpoint, data=json.dumps(payload), content_type="application/json")
+    response = client.post(
+        endpoint, data=json.dumps(payload), content_type="application/json"
+    )
     if response.status_code != expected_status:
         print("Response status:", response.status_code)
         print("Response body:", response.json())
