@@ -30,6 +30,16 @@ This project is a full-stack application for managing programming interview ques
   - Install dependencies with `npm install`.
   - Start the development server with `npm run dev`.
 
+## Testing
+
+Run backend tests with coverage enabled:
+
+```bash
+pytest --cov=backend --cov-report=term-missing
+```
+
+Coverage settings are defined in `.coveragerc`.
+
 ## Documentation
 
 - Backend architecture: [`docs/backend_design.md`](docs/backend_design.md)
