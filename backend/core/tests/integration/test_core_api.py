@@ -23,8 +23,8 @@ def ensure_test_user(db):
 def setup_questions():
     # Just provide question data, not DB objects
     return [
-        {"title": "Two Sum", "slug": "two-sum"},
-        {"title": "Binary Search", "slug": "binary-search"},
+        {"title": "Two Sum"},
+        {"title": "Binary Search"},
     ]
 
 
@@ -44,6 +44,7 @@ def api_session(django_server_url, ensure_test_user):
     return session, username
 
 
+@pytest.mark.integration
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "payload, expected_title",
@@ -68,6 +69,10 @@ def api_session(django_server_url, ensure_test_user):
             },
             "Binary Search",
         ),
+    ],
+    ids=[
+        "create log for Two Sum with brute force approach",
+        "create log for Binary Search with divide and conquer approach",
     ],
 )
 def test_create_and_verify_question_log(
@@ -111,8 +116,13 @@ def test_create_and_verify_question_log(
     assert response.status_code == 204
 
 
+@pytest.mark.integration
 @pytest.mark.django_db
-@pytest.mark.parametrize("nonexistent_id", [99999, 88888])
+@pytest.mark.parametrize(
+    "nonexistent_id",
+    [99999, 88888],
+    ids=["nonexistent id 99999", "nonexistent id 88888"],
+)
 def test_update_nonexistent_question_log(
     api_session, nonexistent_id, setup_questions, django_server_url
 ):
@@ -125,6 +135,7 @@ def test_update_nonexistent_question_log(
     assert response.status_code == 404
 
 
+@pytest.mark.integration
 @pytest.mark.django_db
 def test_list_scoped_to_user(api_session, setup_questions, django_server_url):
     session, _ = api_session

@@ -11,8 +11,8 @@ pytest_plugins = [
 
 
 @pytest.fixture(scope="session")
-def django_server_url(live_server):
+def django_server_url():
     """
     Provides the base URL for the Django live server for integration tests.
     """
-    return live_server.url
+    return "http://localhost:8000"

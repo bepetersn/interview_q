@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import Question, QuestionLog, Tag
 
 
@@ -14,7 +15,18 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = "__all__"
-        read_only_fields = ["user"]
+        read_only_fields = [
+            "user",
+            "slug",
+        ]  # Mark slug as read-only so it's not required in input
+
+    def to_internal_value(self, data):
+        data = data.copy()
+        if "slug" in data:
+            raise ValidationError(
+                {"slug": "Supplying a slug is not allowed. It will be auto-generated."}
+            )
+        return super().to_internal_value(data)
 
 
 class QuestionLogSerializer(serializers.ModelSerializer):

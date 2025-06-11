@@ -27,7 +27,8 @@ def wait_for_server(host="localhost", port=8000, timeout=15):
     return False
 
 
-def test_auth_end_to_end():
+@pytest.mark.parametrize("_", [None], ids=["auth-end-to-end-flow"])
+def test_auth_end_to_end(_):
     server_proc = None
     if not is_server_running():
         # Start Django dev server
