@@ -24,9 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
 ALLOWED_HOSTS = []
+if env_hosts := os.environ.get("DJANGO_ALLOWED_HOSTS"):
+    ALLOWED_HOSTS = [h.strip() for h in env_hosts.split(",") if h.strip()]
 
 
 # Application definition
@@ -49,6 +50,7 @@ AUTH_USER_MODEL = "auth.User"
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",  # Added for CORS (must be first)
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -125,7 +127,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "frontend" / "dist"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -174,3 +178,19 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API documentation for the Interview Questions app",
     "VERSION": "1.0.0",
 }
+if env_origins := os.environ.get("CORS_ALLOWED_ORIGINS"):
+    CORS_ALLOWED_ORIGINS.extend([o.strip() for o in env_origins.split(",") if o.strip()])
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Interview Questions API",
+    "DESCRIPTION": "API documentation for the Interview Questions app",
+    "VERSION": "1.0.0",
+}
+
+# Load CORS_ALLOWED_ORIGINS from environment variable if set
+if env_origins := os.environ.get("CORS_ALLOWED_ORIGINS"):
+    CORS_ALLOWED_ORIGINS.extend([o.strip() for o in env_origins.split(",") if o.strip()])
