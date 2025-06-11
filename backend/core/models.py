@@ -54,6 +54,8 @@ class Question(models.Model):
         max_length=255,
         unique=True,
         help_text="URL-friendly identifier for the question",
+        blank=True,
+        editable=False,  # Slug is auto-generated and should not be set by users
     )
     difficulty = models.CharField(
         max_length=6,
