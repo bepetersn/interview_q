@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv  # Added for python-dotenv
+
+# Load environment variables from a .env file if present
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
@@ -28,6 +32,8 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
 ALLOWED_HOSTS = []
 if env_hosts := os.environ.get("DJANGO_ALLOWED_HOSTS"):
     ALLOWED_HOSTS = [h.strip() for h in env_hosts.split(",") if h.strip()]
+else:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -39,8 +45,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "backend.core",
+    "backend.core.apps.CoreConfig",
+    # If you have a QAdminConfig, use 'backend.q_admin.apps.QAdminConfig'
     "backend.q_admin",
+    # Added new accounts app
+    "backend.accounts",
     "drf_spectacular",
     "corsheaders",  # Added for CORS
 ]
@@ -179,7 +188,9 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
 }
 if env_origins := os.environ.get("CORS_ALLOWED_ORIGINS"):
-    CORS_ALLOWED_ORIGINS.extend([o.strip() for o in env_origins.split(",") if o.strip()])
+    CORS_ALLOWED_ORIGINS.extend(
+        [o.strip() for o in env_origins.split(",") if o.strip()]
+    )
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -193,4 +204,6 @@ SPECTACULAR_SETTINGS = {
 
 # Load CORS_ALLOWED_ORIGINS from environment variable if set
 if env_origins := os.environ.get("CORS_ALLOWED_ORIGINS"):
-    CORS_ALLOWED_ORIGINS.extend([o.strip() for o in env_origins.split(",") if o.strip()])
+    CORS_ALLOWED_ORIGINS.extend(
+        [o.strip() for o in env_origins.split(",") if o.strip()]
+    )

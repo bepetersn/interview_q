@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.apps import AppConfig
 from backend.core.models import Tag
 
 
@@ -14,3 +15,8 @@ class TagAdmin(admin.ModelAdmin):
 #     list_filter = ('difficulty', 'needs_review', 'date_attempted')
 #     search_fields = ('title', 'source', 'solution_approach')
 #     filter_horizontal = ('topic_tags',)
+
+
+class QAdminConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "backend.q_admin"
