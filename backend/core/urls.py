@@ -7,7 +7,6 @@ from .views.question_log import (
 )
 from .views.question import QuestionViewSet, QuestionListCreateView
 from .views.tag import TagListCreateView, TagRetrieveDestroyView
-from .views.auth import RegisterViewSet, LoginViewSet
 
 
 router = DefaultRouter()
@@ -28,16 +27,6 @@ urlpatterns = [
     ),
     path("tags/", TagListCreateView.as_view(), name="tag-list-create"),
     path("tags/<int:pk>/", TagRetrieveDestroyView.as_view(), name="tag-detail"),
-    path(
-        "auth/register/",
-        RegisterViewSet.as_view({"post": "create"}),
-        name="auth-register",
-    ),
-    path(
-        "auth/login/",
-        LoginViewSet.as_view({"post": "create"}),
-        name="auth-login",
-    ),
 ]
 
 urlpatterns += router.urls
