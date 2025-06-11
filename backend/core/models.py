@@ -1,13 +1,12 @@
 from django.db import models
-from django.utils.text import slugify
 from django.conf import settings
-import hashlib
+from .utils import SlugGenerator
 
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(
-        null=True, blank=True, help_text="Detailed description of the tag"
+        blank=True, help_text="Detailed description of the tag"
     )
     created_at = models.DateTimeField(
         auto_now_add=True, help_text="Timestamp when the tag was created"
@@ -40,18 +39,16 @@ class Question(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="questions",
-        null=True,
     )
 
     title = models.CharField(max_length=255)
     source = models.CharField(
         max_length=4095,
-        null=True,
         blank=True,
         help_text="e.g., LeetCode, personal interview",
     )
     notes = models.TextField(
-        null=True, blank=True, help_text="Detailed description of the question"
+        blank=True, help_text="Detailed description of the question"
     )
     slug = models.SlugField(
         max_length=255,
@@ -61,7 +58,6 @@ class Question(models.Model):
     difficulty = models.CharField(
         max_length=6,
         choices=[("Easy", "Easy"), ("Medium", "Medium"), ("Hard", "Hard")],
-        null=True,
         blank=True,
     )
     topic_tags = models.ManyToManyField(
@@ -98,10 +94,7 @@ class Question(models.Model):
         kwargs.pop("slug", None)
         super().__init__(*args, **kwargs)
         if not self.slug and self.title:
-            base_slug = slugify(self.title)
-            # Add a hash to ensure uniqueness
-            hash_suffix = hashlib.sha1(self.title.encode("utf-8")).hexdigest()[:8]
-            self.slug = f"{base_slug}-{hash_suffix}"
+            self.slug = SlugGenerator.generate_unique_slug(self.__class__, self.title)
 
     def __str__(self):
         return f"{self.title} [{self.slug}]"
@@ -124,13 +117,12 @@ class QuestionLog(models.Model):
     outcome = models.CharField(
         max_length=40,
         choices=[("Solved", "Solved"), ("Partial", "Partial"), ("Failed", "Failed")],
-        null=True,
         blank=True,
     )
     solution_approach = models.CharField(
-        max_length=100, null=True, blank=True, help_text="e.g., Brute force, Optimized"
+        max_length=100, blank=True, help_text="e.g., Brute force, Optimized"
     )
-    self_notes = models.TextField(null=True, blank=True)
+    self_notes = models.TextField(blank=True)
 
     class Meta:
         ordering = ["-date_attempted"]
