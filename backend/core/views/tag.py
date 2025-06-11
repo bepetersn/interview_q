@@ -8,7 +8,26 @@ from ..serializers import TagSerializer
 logger = logging.getLogger(__name__)
 
 
-class TagListCreateView(generics.ListCreateAPIView):
+class TagExceptionMixin:
+    def handle_request_with_logging(self, action, request, *args, **kwargs):
+        logger.info(f"Entering the {action} method for Tag")
+        logger.info(f"Incoming payload: {request.data}")
+        try:
+            super_method = getattr(super(), action)
+            response = super_method(request, *args, **kwargs)
+        except ValidationError as exc:
+            logger.warning(f"Validation error {action} Tag: {exc}")
+            return Response(exc.detail, status=400)
+        except Exception as exc:
+            logger.error(f"Unexpected error {action} Tag: {exc}")
+            return Response({"error": str(exc)}, status=500)
+        expected_status = 201 if action == "create" else 200
+        if response.status_code != expected_status:
+            logger.error(f"Error {action} Tag: {response.data}")
+        return response
+
+
+class TagListCreateView(TagExceptionMixin, generics.ListCreateAPIView):
     serializer_class = TagSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -19,27 +38,10 @@ class TagListCreateView(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        logger.info("Entering the create method for Tag")
-        logger.debug(f"Incoming payload: {request.data}")
-        try:
-            tag_name = request.data.get("name")
-            if Tag.objects.filter(name=tag_name).exists():
-                return Response(
-                    {"error": "Tag with this name already exists."}, status=400
-                )
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            response = super().create(request, *args, **kwargs)
-            logger.debug(f"Response object: {response}")
-        except ValidationError as exc:
-            logger.warning(f"Validation error creating Tag: {exc}")
-            return Response(exc.detail, status=400)
-        except Exception as exc:
-            logger.error(f"Unexpected error creating Tag: {exc}")
-            return Response({"error": str(exc)}, status=500)
-        if response.status_code != 201:
-            logger.error(f"Error creating Tag: {response.data}")
-        return response
+        tag_name = request.data.get("name")
+        if Tag.objects.filter(name=tag_name).exists():
+            return Response({"error": "Tag with this name already exists."}, status=400)
+        return self.handle_request_with_logging("create", request, *args, **kwargs)
 
 
 class TagRetrieveDestroyView(generics.RetrieveDestroyAPIView):
