@@ -1,6 +1,8 @@
 import pytest
 from playwright.sync_api import sync_playwright
 import sqlite3
+from django.contrib.auth.models import User
+from django.test import Client
 
 
 @pytest.fixture(scope="function")
@@ -22,3 +24,15 @@ def reset_database():
     cursor.execute("DELETE FROM core_questionlog")
     connection.commit()
     connection.close()
+
+
+@pytest.fixture()
+def user(db):
+    return User.objects.create_user(username="slugtestuser", password="pass")
+
+
+@pytest.fixture()
+def client(user):
+    client = Client()
+    client.login(username="slugtestuser", password="pass")
+    return client

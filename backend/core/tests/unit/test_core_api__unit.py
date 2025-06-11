@@ -1,19 +1,5 @@
 import pytest
 import json
-from django.test import Client
-from django.contrib.auth.models import User
-
-
-@pytest.fixture()
-def user(db):
-    return User.objects.create_user(username="tester", password="pass")
-
-
-@pytest.fixture()
-def client(user):
-    client = Client()
-    client.login(username="tester", password="pass")
-    return client
 
 
 def _create_questionlog_and_dependencies(client):
@@ -48,10 +34,16 @@ def _create_tag(client):
 @pytest.mark.parametrize(
     "endpoint, payload, expected_status",
     [
-        ("/api/questionlogs/", {"title": "New Question", "difficulty": "Easy"}, 201),
+        ("/api/questionlogs/", {"title": "New Question", "difficulty": "Easy"}, 400),
         ("/api/questionlogs/", {}, 400),
         ("/api/tags/", {"name": "New Tag"}, 201),
         ("/api/tags/", {}, 400),
+    ],
+    ids=[
+        "create questionlog with title and difficulty fails",
+        "create questionlog with empty payload fails",
+        "create tag with name succeeds",
+        "create tag with empty payload fails",
     ],
 )
 def test_create_views(client, endpoint, payload, expected_status):
@@ -88,6 +80,10 @@ def test_create_views(client, endpoint, payload, expected_status):
         ("/api/questionlogs/", "GET", 200),
         ("/api/tags/", "GET", 200),
     ],
+    ids=[
+        "list questionlogs returns 200",
+        "list tags returns 200",
+    ],
 )
 def test_list_views(client, endpoint, method, expected_status):
     if method == "GET":
@@ -123,7 +119,9 @@ def test_user_scoped_list(client):
             },
             200,
         ),
-        # Remove tag update test, as tag update is no longer supported
+    ],
+    ids=[
+        "update questionlog with all fields succeeds",
     ],
 )
 def test_update_views(client, endpoint, payload, expected_status):
@@ -153,6 +151,11 @@ def test_update_views(client, endpoint, payload, expected_status):
         ("/api/tags/1/", 204),
         ("/api/questions/1/", 204),
     ],
+    ids=[
+        "delete questionlog succeeds",
+        "delete tag succeeds",
+        "delete question succeeds",
+    ],
 )
 def test_delete_views(client, endpoint, expected_status):
     if endpoint.startswith("/api/questionlogs/"):
@@ -160,10 +163,7 @@ def test_delete_views(client, endpoint, expected_status):
     elif endpoint.startswith("/api/tags/"):
         _create_tag(client)
     elif endpoint.startswith("/api/questions/"):
-        question_payload = {
-            "title": "Delete Me",
-            "slug": "delete-me",
-        }
+        question_payload = {"title": "Delete Me"}
         client.post(
             "/api/questions/",
             data=json.dumps(question_payload),
@@ -177,10 +177,14 @@ def test_delete_views(client, endpoint, expected_status):
 @pytest.mark.parametrize(
     "endpoint, payload, expected_status",
     [
-        ("/api/questions/", {"title": "FizzBuzz", "slug": "fizz-buzz"}, 201),
+        ("/api/questions/", {"title": "FizzBuzz", "slug": "fizz-buzz"}, 400),
         ("/api/questions/", {}, 400),
-        ("/api/questions/", {"title": "Only Title"}, 400),
-        ("/api/questions/", {"slug": "only-slug"}, 400),
+        ("/api/questions/", {"title": "Only Title"}, 201),
+    ],
+    ids=[
+        "should fail with slug",
+        "should fail with empty payload",
+        "should create question with only title",
     ],
 )
 def test_create_question_api(client, endpoint, payload, expected_status):

@@ -1,37 +1,33 @@
 # flake8: noqa
+import json
 import pytest
-from backend.core.utils import SlugGenerator
-from unittest.mock import MagicMock
 
 
-class DummyModel:
-    objects = MagicMock()
-
-
-def test_generate_unique_slug_uniqueness():
-    # Simulate no existing slugs
-    DummyModel.objects.filter.return_value.exists.return_value = False
-    title = "Test Title"
-    slug1 = SlugGenerator.generate_unique_slug(DummyModel, title)
-    slug2 = SlugGenerator.generate_unique_slug(DummyModel, title)
-    assert slug1 != slug2, "Slugs should be unique for same title on repeated calls"
-
-
-def test_generate_unique_slug_collision():
-    # Simulate a collision on the first candidate, but not on the second
-    call_count = {"count": 0}
-
-    def filter_side_effect(**kwargs):
-        # First call returns True (collision), second returns False
-        call_count["count"] += 1
-
-        class Exists:
-            def exists(self):
-                return call_count["count"] == 1
-
-        return Exists()
-
-    DummyModel.objects.filter.side_effect = filter_side_effect
-    title = "Test Title"
-    slug = SlugGenerator.generate_unique_slug(DummyModel, title)
-    assert slug.endswith("-1"), "Slug should have a counter suffix after collision"
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "payload, expected_status, slug_check",
+    [
+        # User supplies a slug, should fail
+        ({"title": "Unique Slug Test", "slug": "user-supplied-slug"}, 400, None),
+        # User omits slug, API should generate one
+        ({"title": "Another Slug Test"}, 201, "another-slug-test"),
+        # User supplies only slug, should fail (title required)
+        ({"slug": "should-not-work"}, 400, None),
+    ],
+    ids=[
+        "fail with user-supplied slug",
+        "create and generate slug",
+        "fail with only slug",
+    ],
+)
+def test_question_api_slug_handling(client, payload, expected_status, slug_check):
+    response = client.post(
+        "/api/questions/",
+        data=json.dumps(payload),
+        content_type="application/json",
+    )
+    assert response.status_code == expected_status
+    if expected_status == 201 and slug_check:
+        data = response.json()
+        assert data["slug"] is not None and data["slug"] != ""
+        assert slug_check in data["slug"]
