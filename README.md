@@ -50,15 +50,19 @@ See [`docs/privacy_policy.md`](docs/privacy_policy.md) for information on how qu
 
 ## Deployment
 
-You can deploy the Django API to **AWS** and the Vite/React frontend to **Vercel**.
+You can deploy the Django API on **AWS** (e.g., using Elastic Beanstalk) and the Vite/React frontend on **Vercel**.
 
 1. **Backend (AWS)**
    - `requirements.txt` already includes `gunicorn`, `whitenoise`, and `django-cors-headers`.
    - Set environment variables from `.env.example` (e.g., `DJANGO_SECRET_KEY`).
-   - Deploy with `git push heroku main` and run `python manage.py migrate`.
+   - Deploy using your preferred AWS service. For Elastic Beanstalk, run:
+     ```bash
+     eb init -p python-3.11 your-app
+     eb deploy
+     ```
 
 2. **Frontend (Vercel)**
    - Build with `npm run build` in the `frontend/` folder.
-   - Configure Vercel to use `frontend/dist` as the output directory and set `VITE_API_BASE_URL` to the Heroku API URL.
+   - Configure Vercel to use `frontend/dist` as the output directory and set `VITE_API_BASE_URL` to the AWS API URL.
 
-After deployment, the frontend will call the Heroku-hosted API using the configured base URL. See `docs/deployment.md` for full details.
+After deployment, the frontend will call the AWS-hosted API using the configured base URL. See `docs/deployment.md` for full details.
