@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "backend.core",
     "backend.q_admin",
+    "drf_spectacular",
     "corsheaders",  # Added for CORS
 ]
 
@@ -161,3 +162,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Interview Questions API",
+    "DESCRIPTION": "API documentation for the Interview Questions app",
+    "VERSION": "1.0.0",
+}
