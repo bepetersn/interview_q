@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     "corsheaders",  # Added for CORS
 ]
 
+AUTH_USER_MODEL = "auth.User"
+
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",  # Added for CORS (must be first)
     "django.middleware.security.SecurityMiddleware",

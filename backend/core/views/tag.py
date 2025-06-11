@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 import logging
@@ -9,8 +9,14 @@ logger = logging.getLogger(__name__)
 
 
 class TagListCreateView(generics.ListCreateAPIView):
-    queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Tag.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         logger.info("Entering the create method for Tag")
@@ -37,5 +43,8 @@ class TagListCreateView(generics.ListCreateAPIView):
 
 
 class TagRetrieveDestroyView(generics.RetrieveDestroyAPIView):
-    queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Tag.objects.filter(user=self.request.user)
