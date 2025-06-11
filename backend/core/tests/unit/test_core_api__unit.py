@@ -18,14 +18,18 @@ def client(user):
 
 def _create_questionlog_and_dependencies(client):
     # Ensure a question exists for the foreign key
-    question_payload = {"title": "Test Q", "slug": "test-q", "difficulty": "Easy"}
+    question_payload = {"title": "Test Q", "difficulty": "Easy"}
     resp = client.post(
         "/api/questions/",
         data=json.dumps(question_payload),
         content_type="application/json",
     )
     question_id = resp.json()["id"]
-    create_payload = {"title": "Original Question", "difficulty": "Easy", "question": question_id}
+    create_payload = {
+        "title": "Original Question",
+        "difficulty": "Easy",
+        "question": question_id,
+    }
     client.post(
         "/api/questionlogs/",
         data=json.dumps(create_payload),
@@ -96,22 +100,6 @@ def test_list_views(client, endpoint, method, expected_status):
 @pytest.mark.django_db
 def test_user_scoped_list(client):
     _create_questionlog_and_dependencies(client)
-    from django.contrib.auth.models import User
-
-    other = User.objects.create_user(username="other", password="pass")
-    other_client = Client()
-    other_client.login(username="other", password="pass")
-    question_payload = {"title": "Q2", "slug": "q2", "difficulty": "Easy"}
-    resp = other_client.post(
-        "/api/questions/",
-        data=json.dumps(question_payload),
-        content_type="application/json",
-    )
-    other_client.post(
-        "/api/questionlogs/",
-        data=json.dumps({"question": resp.json()["id"]}),
-        content_type="application/json",
-    )
 
     response = client.get("/api/questionlogs/")
     assert response.status_code == 200

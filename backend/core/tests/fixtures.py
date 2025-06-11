@@ -16,7 +16,7 @@ def request_context():
 @pytest.fixture(scope="function", autouse=True)
 def reset_database():
     # Reset the SQLite database after each test
-    db_path = "db/db.sqlite3"
+    db_path = "backend/db/db.sqlite3"
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
     cursor.execute("DELETE FROM core_questionlog")
