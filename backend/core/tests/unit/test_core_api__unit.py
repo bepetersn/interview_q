@@ -1,5 +1,11 @@
 import pytest
 import json
+from backend.core.views.question import QuestionViewSet
+from backend.core.tests.unit.mocks import (
+    _mock_question,
+    _mock_request,
+    _mock_view_response,
+)
 
 
 def _create_questionlog_and_dependencies(client):
@@ -28,6 +34,12 @@ def _create_tag(client):
     client.post(
         "/api/tags/", data=json.dumps(create_payload), content_type="application/json"
     )
+
+
+class _OpenQuestionViewSet(QuestionViewSet):
+    """Subclass the viewset for open permissions in unit tests"""
+
+    permission_classes = []
 
 
 @pytest.mark.django_db
@@ -195,3 +207,48 @@ def test_create_question_api(client, endpoint, payload, expected_status):
         print("Response status:", response.status_code)
         print("Response body:", response.json())
     assert response.status_code == expected_status
+
+
+def test_question_retrieve_unit():
+    mock_question = _mock_question(123, "Retrieve Me")
+    request = _mock_request("get", "/api/questions/123/")
+    response = _mock_view_response(
+        viewset_cls=_OpenQuestionViewSet,
+        action_map={"get": "retrieve"},
+        request=request,
+        pk=123,
+        mock_obj=mock_question,
+        serializer_data={"id": 123, "title": "Retrieve Me"},
+    )
+    assert response.status_code == 200
+    assert response.data["id"] == 123
+    assert response.data["title"] == "Retrieve Me"
+
+
+def test_question_update_unit():
+    mock_question = _mock_question(456, "Update Me")
+    update_payload = {"title": "Updated Title"}
+    request = _mock_request("patch", "/api/questions/456/", data=update_payload)
+    response = _mock_view_response(
+        viewset_cls=_OpenQuestionViewSet,
+        action_map={"patch": "partial_update"},
+        request=request,
+        pk=456,
+        mock_obj=mock_question,
+        serializer_data={"id": 456, "title": "Updated Title"},
+    )
+    assert response.status_code == 200
+    assert response.data["title"] == "Updated Title"
+
+
+def test_question_delete_unit():
+    mock_question = _mock_question(789, "", delete=True)
+    request = _mock_request("delete", "/api/questions/789/")
+    response = _mock_view_response(
+        viewset_cls=_OpenQuestionViewSet,
+        action_map={"delete": "destroy"},
+        request=request,
+        pk=789,
+        mock_obj=mock_question,
+    )
+    assert response.status_code in (204, 200)

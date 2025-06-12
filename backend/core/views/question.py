@@ -7,32 +7,48 @@ from rest_framework.exceptions import ValidationError
 
 
 class QuestionExceptionMixin:
-    def handle_request_with_logging(self, action, request, *args, **kwargs):
+
+    def handle_request_with_logging_dispatch(
+        self, dispatch_func, request, *args, **kwargs
+    ):
         logger = logging.getLogger(__name__)
-        logger.info(f"Entering the {action} method for Question")
-        logger.info(f"Incoming payload: {request.data}")
+        logger.info(f"Dispatching {request.method} {request.path} for Question")
+        logger.info(f"Incoming payload: {getattr(request, 'data', None)}")
         try:
-            super_method = getattr(super(), action)
-            response = super_method(request, *args, **kwargs)
+            response = dispatch_func(request, *args, **kwargs)
         except ValidationError as exc:
-            logger.warning(f"Validation error {action} Question: {exc}")
+            logger.warning(f"Validation error during dispatch: {exc}")
             return Response(exc.detail, status=400)
         except Exception as exc:
-            logger.error(f"Unexpected error {action} Question: {exc}")
+            logger.error(f"Unexpected error during dispatch: {exc}")
             return Response({"error": str(exc)}, status=500)
-        expected_status = 201 if action == "create" else 200
-        if response.status_code != expected_status:
-            logger.error(f"Error {action} Question: {response.data}")
+        valid_status = {
+            "POST": {201},
+            "PUT": {200, 202},
+            "PATCH": {200, 202},
+            "DELETE": {204, 200},
+            "GET": {200},
+        }.get(request.method, {200})
+        if response.status_code not in valid_status:
+            response_data = getattr(response, "data", None)
+            logger.error(f"Error {request.method} {request.path}: {response_data}")
         return response
 
 
-class QuestionViewSet(viewsets.ModelViewSet):
+class QuestionViewSet(QuestionExceptionMixin, viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def dispatch(self, request, *args, **kwargs):
+        # Use the mixin's logging/exception handling for dispatch
+        return self.handle_request_with_logging_dispatch(
+            lambda req, *a, **kw: super(QuestionViewSet, self).dispatch(req, *a, **kw),
+            request,
+            *args,
+            **kwargs,
+        )
+
     def get_queryset(self):  # type: ignore[override]
-        # Return type "BaseManager[Question]" is not
-        # assignable to type "Never" in base class
         return Question.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
@@ -43,11 +59,44 @@ class QuestionListCreateView(QuestionExceptionMixin, generics.ListCreateAPIView)
     serializer_class = QuestionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def dispatch(self, request, *args, **kwargs):
+        return self.handle_request_with_logging_dispatch(
+            lambda req, *a, **kw: super(QuestionListCreateView, self).dispatch(
+                req, *a, **kw
+            ),
+            request,
+            *args,
+            **kwargs,
+        )
+
     def get_queryset(self):  # type: ignore[override]
         return Question.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        return self.handle_request_with_logging("create", request, *args, **kwargs)
+
+class QuestionRetrieveUpdateDestroyView(
+    QuestionExceptionMixin, generics.RetrieveUpdateDestroyAPIView
+):
+    serializer_class = QuestionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def dispatch(self, request, *args, **kwargs):
+        return self.handle_request_with_logging_dispatch(
+            lambda req, *a, **kw: super(
+                QuestionRetrieveUpdateDestroyView, self
+            ).dispatch(req, *a, **kw),
+            request,
+            *args,
+            **kwargs,
+        )
+
+    def get_queryset(self):  # type: ignore[override]
+        return Question.objects.filter(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_destroy(self, instance):
+        instance.delete()

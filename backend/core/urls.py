@@ -5,7 +5,7 @@ from .views.question_log import (
     QuestionLogRetrieveUpdateDestroyView,
     QuestionLogViewSet,
 )
-from .views.question import QuestionViewSet, QuestionListCreateView
+from .views.question import QuestionViewSet
 from .views.tag import TagListCreateView, TagRetrieveDestroyView
 
 
@@ -14,7 +14,6 @@ router.register(r"questions", QuestionViewSet, basename="question")
 router.register(r"questionlogs", QuestionLogViewSet, basename="questionlog")
 
 urlpatterns = [
-    path("questions/", QuestionListCreateView.as_view(), name="question-list-create"),
     path(
         "questionlogs/",
         QuestionLogListCreateView.as_view(),
