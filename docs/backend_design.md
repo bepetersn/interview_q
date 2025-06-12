@@ -17,7 +17,7 @@ This document describes the backend architecture and design for the Interview Qu
     - Views implement CRUD endpoints using Django REST Framework generics and viewsets
     - `urls.py` wires the view classes and viewsets
     - `management/commands/create_fake_data.py` provides a custom command to populate test data
-    - Extensive tests under `apps/core/tests` exercise the API via Playwright using parametrized fixtures
+    - Extensive tests under `apps/core/tests` exercise the API using parametrized fixtures
 
   - `apps/q_admin`: intended for Django admin customizations but currently contains only `admin.py` registering a simple admin class
 
@@ -25,14 +25,14 @@ This document describes the backend architecture and design for the Interview Qu
   - `q_admin/` at the project root includes admin code that mirrors the app folder; its purpose may overlap with `apps/q_admin`.
 
 - **Configuration files**
-  - `requirements.txt` lists runtime dependencies (Django, DRF, Playwright, etc.)
+  - `requirements.txt` lists runtime dependencies (Django, DRF, etc.)
   - `pyproject.toml` configures Black formatting exclusions
   - `conftest.py` initializes Django for tests and loads fixtures from `apps.core.tests.fixtures`
 
 ## Important Things to Know
 
 - It’s a Django REST Framework project designed to track programming interview questions and logs. Core endpoints operate under `/api/` as routed in `urls.py`.
-- Tests make HTTP requests with Playwright rather than Django’s test client, so they depend on an actual server. The fixtures reset the SQLite database after each test.
+- Integration tests make HTTP requests rather than Django’s test client, so they depend on an actual server. The fixtures reset the SQLite database after each test.
 - A custom management command (`create_fake_data`) can be used to seed the database.
 - Logging is configured via the `LOGGING` dictionary in `settings.py` to output to console with additional logger settings for `apps.core.views`.
 

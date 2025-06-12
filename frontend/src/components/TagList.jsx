@@ -1,5 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, List, ListItem, ListItemText, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Switch, FormControlLabel, CircularProgress } from '@mui/material';
+import {
+  Typography,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Switch,
+  FormControlLabel,
+  CircularProgress,
+} from '@mui/material';
 import { Delete, Edit, Add } from '@mui/icons-material';
 import api from '../api';
 
@@ -18,6 +33,7 @@ function TagList() {
       setTags(res.data);
     } catch (e) {
       setTags([]);
+      console.error('Failed to fetch tags: ', e);
     }
     setLoading(false);
   };
@@ -53,7 +69,9 @@ function TagList() {
       }
       fetchTags();
       handleClose();
-    } catch (e) {}
+    } catch (e) {
+      console.error('Failed to save tag: ', e);
+    }
     setSaving(false);
   };
 

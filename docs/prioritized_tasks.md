@@ -13,7 +13,6 @@ This document organizes the ideas from `future_concerns.md` into actionable task
   - Add rate limiting to keep upstream services happy.
 - **Frontend Test Coverage**
   - Set up Jest/React Testing Library for component tests.
-  - Add end‑to‑end tests (Cypress or Playwright).
 
 ## Priority 2 – Usability & Documentation
 - **Error Feedback & Onboarding**

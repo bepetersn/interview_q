@@ -44,6 +44,29 @@ def api_session(django_server_url, ensure_test_user):
     return session, username
 
 
+# Helper to create a user and return a session
+def _create_user_and_session(username, password):
+    django_server_url = "http://localhost:8000"  # Adjust as needed
+    user_session = requests.Session()
+    user_session.headers.update({"Content-Type": "application/json"})
+    # Register user
+    reg_resp = user_session.post(
+        f"{django_server_url}/api/accounts/register/",
+        json={"username": username, "password": password},
+    )
+    assert reg_resp.status_code in (200, 201, 204)
+    # Login user
+    login_resp = user_session.post(
+        f"{django_server_url}/api/accounts/login/",
+        json={"username": username, "password": password},
+    )
+    assert login_resp.status_code in (200, 201, 204)
+    csrf_token = user_session.cookies.get("csrftoken")
+    if csrf_token:
+        user_session.headers.update({"X-CSRFToken": csrf_token})
+    return user_session
+
+
 @pytest.mark.integration
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -137,49 +160,36 @@ def test_update_nonexistent_question_log(
 
 @pytest.mark.integration
 @pytest.mark.django_db
-def test_list_scoped_to_user(api_session, setup_questions, django_server_url):
-    session, _ = api_session
-    # Create questions via API for the test user and get their IDs
-    q1_resp = session.post(
-        f"{django_server_url}/api/questions/", json=setup_questions[0]
-    )
+def test_list_scoped_to_user(
+    reset_database, api_session, setup_questions, django_server_url
+):
+    main_session, _ = api_session
+    question_api = f"{django_server_url}/api/questions/"
+    questionlog_api = f"{django_server_url}/api/questionlogs/"
+
+    # Create a question and log for the main test user
+    q1_resp = main_session.post(question_api, json=setup_questions[0])
     assert q1_resp.status_code == 201
     q1_id = q1_resp.json()["id"]
-    payload = {
-        "question": q1_id,
-        "time_spent_min": 10,
-    }
-    session.post(f"{django_server_url}/api/questionlogs/", json=payload)
+    payload = {"question": q1_id, "time_spent_min": 10}
+    log_resp = main_session.post(questionlog_api, json=payload)
+    assert log_resp.status_code == 201
 
-    # create log for another user
-    other_session = requests.Session()
-    other_session.headers.update({"Content-Type": "application/json"})
+    # Create another user and add a question log for them
     other_username = f"other_{int(time.time())}"
-    # Register and login other user
-    other_session.post(
-        f"{django_server_url}/api/accounts/register/",
-        json={"username": other_username, "password": "pass"},
-    )
-    other_session.post(
-        f"{django_server_url}/api/accounts/login/",
-        json={"username": other_username, "password": "pass"},
-    )
-    # Set CSRF token for other user session
-    csrf_token = other_session.cookies.get("csrftoken")
-    if csrf_token:
-        other_session.headers.update({"X-CSRFToken": csrf_token})
-    # Create the same question for the other user
-    other_q1_resp = other_session.post(
-        f"{django_server_url}/api/questions/", json=setup_questions[0]
-    )
-    assert other_q1_resp.status_code == 201
-    other_q1_id = other_q1_resp.json()["id"]
-    other_payload = {
-        "question": other_q1_id,
-        "time_spent_min": 10,
-    }
-    other_session.post(f"{django_server_url}/api/questionlogs/", json=other_payload)
+    other_password = "pass"
+    other_session = _create_user_and_session(other_username, other_password)
+    other_q_resp = other_session.post(question_api, json=setup_questions[0])
+    assert other_q_resp.status_code == 201
+    other_q_id = other_q_resp.json()["id"]
+    other_payload = {"question": other_q_id, "time_spent_min": 10}
+    other_log_resp = other_session.post(questionlog_api, json=other_payload)
+    assert other_log_resp.status_code == 201
 
-    response = session.get(f"{django_server_url}/api/questionlogs/")
+    # Ensure only the test user's log is returned
+    response = main_session.get(questionlog_api)
     assert response.status_code == 200
-    assert len(response.json()) == 1
+    logs = response.json()
+    assert isinstance(logs, list)
+    assert len(logs) == 1
+    assert logs[0]["question"] == q1_id

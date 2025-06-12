@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import viewsets, permissions, mixins
 from rest_framework.response import Response
 from backend.core.serializers import RegisterSerializer, LoginSerializer
+from .serializers import UserSerializer
 import logging
 
 # flake8: noqa
@@ -53,7 +54,8 @@ class LoginViewSet(viewsets.GenericViewSet):
             return Response({"detail": "Invalid credentials"}, status=400)
         login(request, user)
         logger.info(f"User {user.username} logged in successfully.")
-        return Response({"detail": "Logged in"})
+        user_data = UserSerializer(user).data
+        return Response(user_data)
 
 
 class LogoutViewSet(viewsets.GenericViewSet):

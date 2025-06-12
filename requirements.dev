@@ -3,5 +3,4 @@ flake8
 black
 pep8
 pytest-django
-playwright
 pre-commit

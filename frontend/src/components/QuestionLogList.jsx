@@ -1,6 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Typography, Button, List, ListItem, ListItemText, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, CircularProgress, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import {
+  Typography,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  CircularProgress,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+} from '@mui/material';
 import { Delete, Edit, Add } from '@mui/icons-material';
 import api from '../api';
 
@@ -34,7 +51,7 @@ function QuestionLogList() {
 
   const fetchQuestions = async () => {
     try {
-      const res = await api.get('questions/');
+      const res = await api.get('apiquestions/');
       setQuestions(res.data);
     } catch (e) {
       setQuestions([]);

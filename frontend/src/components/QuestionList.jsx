@@ -1,5 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, List, ListItem, ListItemText, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Switch, FormControlLabel, CircularProgress, Chip, Box, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import {
+  Typography,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Switch,
+  FormControlLabel,
+  CircularProgress,
+  Chip,
+  Box,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl
+} from '@mui/material';
 import { Delete, Edit, Add, ListAlt } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
@@ -25,22 +46,24 @@ function QuestionList() {
 
   const fetchQuestions = async () => {
     setLoading(true);
-    try {
-      const res = await api.get('questions/');
-      setQuestions(res.data);
-    } catch (e) {
-      setQuestions([]);
-    }
-    setLoading(false);
-  };
+      try {
+        const res = await api.get('questions/');
+        setQuestions(res.data);
+      } catch (e) {
+        console.error("Error fetching questions:", e);
+        setQuestions([]);
+      }
+      setLoading(false);
+    };
 
-  const fetchTags = async () => {
-    try {
-      const res = await api.get('tags/');
-      setTags(res.data);
-    } catch (e) {
-      setTags([]);
-    }
+    const fetchTags = async () => {
+      try {
+        const res = await api.get('tags/');
+        setTags(res.data);
+      } catch (e) {
+        console.error("Error fetching tags:", e);
+        setTags([]);
+      }
   };
 
   useEffect(() => {
@@ -85,7 +108,9 @@ function QuestionList() {
       }
       fetchQuestions();
       handleClose();
-    } catch (e) {}
+    } catch (e) {
+      console.error("Error saving question:", e);
+    }
     setSaving(false);
   };
 

@@ -30,10 +30,11 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
 ALLOWED_HOSTS = []
-if env_hosts := os.environ.get("DJANGO_ALLOWED_HOSTS"):
+if not DEBUG and os.environ.get("DJANGO_ALLOWED_HOSTS"):
+    env_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "")
     ALLOWED_HOSTS = [h.strip() for h in env_hosts.split(",") if h.strip()]
 else:
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+    ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -171,12 +172,20 @@ LOGGING = {
     },
 }
 
-# CORS settings for local frontend
+# CORS settings
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
+
+# if DEBUG:
+CORS_ALLOW_CREDENTIALS = (
+    True  # Allow cookies (sessionid, csrftoken) to be sent cross-origin
+)
+CSRF_COOKIE_SAMESITE = None  # Allow CSRF cookie to be sent cross-site (for local dev)
+CSRF_COOKIE_SECURE = False  # Allow CSRF cookie over HTTP for local dev
+SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_SECURE = False
+
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
