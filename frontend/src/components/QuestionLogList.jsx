@@ -41,7 +41,7 @@ function QuestionLogList() {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const res = await api.get('questionlogs/', questionId ? { params: { question: questionId } } : {});
+      const res = await api.get(`questions/${questionId}/logs/`);
       setLogs(res.data);
     } catch (e) {
       setLogs([]);
@@ -90,9 +90,9 @@ function QuestionLogList() {
     try {
       const payload = { ...form };
       if (editLog) {
-        await api.put(`questionlogs/${editLog.id}/`, payload);
+        await api.put(`questions/${questionId}/logs/${editLog.id}/`, payload);
       } else {
-        await api.post('questionlogs/', payload);
+        await api.post(`questions/${questionId}/logs/`, payload);
       }
       fetchLogs();
       handleClose();
@@ -102,7 +102,7 @@ function QuestionLogList() {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this log?')) return;
-    await api.delete(`questionlogs/${id}/`);
+    await api.delete(`questions/${questionId}/logs/${id}/`);
     fetchLogs();
   };
 

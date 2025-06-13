@@ -44,10 +44,14 @@ class QuestionLogListCreateView(QuestionLogExceptionMixin, generics.ListCreateAP
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):  # type: ignore[override]
-        return QuestionLog.objects.filter(user=self.request.user)
+        question_id = self.kwargs.get("question_id")
+        return QuestionLog.objects.filter(
+            user=self.request.user, question_id=question_id
+        )
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        question_id = self.kwargs.get("question_id")
+        serializer.save(user=self.request.user, question_id=question_id)
 
     def create(self, request, *args, **kwargs):
         return self.handle_request_with_logging("create", request, *args, **kwargs)
@@ -60,7 +64,10 @@ class QuestionLogRetrieveUpdateDestroyView(
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):  # type: ignore[override]
-        return QuestionLog.objects.filter(user=self.request.user)
+        question_id = self.kwargs.get("question_id")
+        return QuestionLog.objects.filter(
+            user=self.request.user, question_id=question_id
+        )
 
     def update(self, request, *args, **kwargs):
         try:

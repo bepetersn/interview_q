@@ -72,20 +72,24 @@ def test_create_and_verify_question_log(
     question1_id = q1_resp.json()["id"]
     question2_id = q2_resp.json()["id"]
     payload = dict(payload)
-    payload["question"] = question1_id if expected_title == "Two Sum" else question2_id
+    question_id = question1_id if expected_title == "Two Sum" else question2_id
+    payload["question"] = question_id
     logger.info("Payload being sent: %s", json.dumps(payload, indent=2))
     assert (
         "question" in payload and payload["question"] is not None
     ), "The 'question' field is missing or None in the payload."
     response = session.post(
-        f"{BASE_URL}/questionlogs/", json=payload, verify=REQUESTS_VERIFY
+        f"{BASE_URL}/questions/{question_id}/logs/",
+        json=payload,
+        verify=REQUESTS_VERIFY,
     )
     logger.info("Response received: %s - %s", response.status_code, response.content)
     assert response.status_code == 201
     question_log_id = response.json().get("id")
     assert question_log_id is not None
     response = session.get(
-        f"{BASE_URL}/questionlogs/{question_log_id}/", verify=REQUESTS_VERIFY
+        f"{BASE_URL}/questions/{question_id}/logs/{question_log_id}/",
+        verify=REQUESTS_VERIFY,
     )
     assert response.status_code == 200
     data = response.json()
@@ -96,7 +100,8 @@ def test_create_and_verify_question_log(
     question_data = question_response.json()
     assert question_data.get("title") == expected_title
     response = session.delete(
-        f"{BASE_URL}/questionlogs/{question_log_id}/", verify=REQUESTS_VERIFY
+        f"{BASE_URL}/questions/{question_id}/logs/{question_log_id}/",
+        verify=REQUESTS_VERIFY,
     )
     assert response.status_code == 204
 
@@ -128,7 +133,6 @@ def test_list_scoped_to_user(
 ):
     main_session, _ = logged_in_session
     question_api = f"{BASE_URL}/questions/"
-    questionlog_api = f"{BASE_URL}/questionlogs/"
 
     # Create a question and log for the main test user
     q1_resp = main_session.post(
@@ -137,7 +141,9 @@ def test_list_scoped_to_user(
     assert q1_resp.status_code == 201
     q1_id = q1_resp.json()["id"]
     payload = {"question": q1_id, "time_spent_min": 10}
-    log_resp = main_session.post(questionlog_api, json=payload, verify=REQUESTS_VERIFY)
+    log_resp = main_session.post(
+        f"{BASE_URL}/questions/{q1_id}/logs/", json=payload, verify=REQUESTS_VERIFY
+    )
     assert log_resp.status_code == 201
 
     # Create another user and add a question log for them
@@ -155,12 +161,16 @@ def test_list_scoped_to_user(
         other_q_id = other_q_resp.json()["id"]
         other_payload = {"question": other_q_id, "time_spent_min": 10}
         other_log_resp = other_session.post(
-            questionlog_api, json=other_payload, verify=REQUESTS_VERIFY
+            f"{BASE_URL}/questions/{other_q_id}/logs/",
+            json=other_payload,
+            verify=REQUESTS_VERIFY,
         )
         assert other_log_resp.status_code == 201
 
         # Ensure only the test user's log is returned
-        response = main_session.get(questionlog_api, verify=REQUESTS_VERIFY)
+        response = main_session.get(
+            f"{BASE_URL}/questions/{q1_id}/logs/", verify=REQUESTS_VERIFY
+        )
         assert response.status_code == 200
         logs = response.json()
         assert isinstance(logs, list)

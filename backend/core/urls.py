@@ -3,29 +3,27 @@ from rest_framework.routers import DefaultRouter
 from .views.question_log import (
     QuestionLogListCreateView,
     QuestionLogRetrieveUpdateDestroyView,
-    QuestionLogViewSet,
 )
 from .views.question import QuestionViewSet
-from .views.tag import TagListCreateView, TagRetrieveDestroyView
+from .views.tag import TagListCreateView, TagRetrieveUpdateDestroyView
 
 
 router = DefaultRouter()
 router.register(r"questions", QuestionViewSet, basename="question")
-router.register(r"questionlogs", QuestionLogViewSet, basename="questionlog")
 
 urlpatterns = [
     path(
-        "questionlogs/",
+        "questions/<int:question_id>/logs/",
         QuestionLogListCreateView.as_view(),
         name="questionlog-list-create",
     ),
     path(
-        "questionlogs/<int:pk>/",
+        "questions/<int:question_id>/logs/<int:pk>/",
         QuestionLogRetrieveUpdateDestroyView.as_view(),
         name="questionlog-detail",
     ),
     path("tags/", TagListCreateView.as_view(), name="tag-list-create"),
-    path("tags/<int:pk>/", TagRetrieveDestroyView.as_view(), name="tag-detail"),
+    path("tags/<int:pk>/", TagRetrieveUpdateDestroyView.as_view(), name="tag-detail"),
 ]
 
 urlpatterns += router.urls

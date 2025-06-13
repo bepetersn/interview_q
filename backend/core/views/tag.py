@@ -31,7 +31,7 @@ class TagListCreateView(TagExceptionMixin, generics.ListCreateAPIView):
     serializer_class = TagSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
+    def get_queryset(self):  # type: ignore
         return Tag.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
@@ -44,9 +44,22 @@ class TagListCreateView(TagExceptionMixin, generics.ListCreateAPIView):
         return self.handle_request_with_logging("create", request, *args, **kwargs)
 
 
-class TagRetrieveDestroyView(generics.RetrieveDestroyAPIView):
+class TagRetrieveUpdateDestroyView(
+    TagExceptionMixin, generics.RetrieveUpdateDestroyAPIView
+):
     serializer_class = TagSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
+    def get_queryset(self):  # type: ignore
         return Tag.objects.filter(user=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        tag_name = request.data.get("name")
+        tag_id = self.kwargs.get("pk")
+        if (
+            Tag.objects.filter(name=tag_name, user=self.request.user)
+            .exclude(id=tag_id)
+            .exists()
+        ):
+            return Response({"error": "Tag with this name already exists."}, status=400)
+        return super().update(request, *args, **kwargs)

@@ -8,25 +8,29 @@ from backend.core.tests.unit.mocks import (
 )
 
 
-def _create_questionlog_and_dependencies(client):
-    # Ensure a question exists for the foreign key
-    question_payload = {"title": "Test Q", "difficulty": "Easy"}
+def _create_question(client, title="Original Question"):
+    create_payload = {"title": title}
     resp = client.post(
         "/api/questions/",
-        data=json.dumps(question_payload),
+        data=json.dumps(create_payload),
         content_type="application/json",
     )
+    return resp
+
+
+def _create_questionlog_and_dependencies(client):
+    resp = _create_question(client, title="Test Q")
     question_id = resp.json()["id"]
     create_payload = {
         "title": "Original Question",
         "difficulty": "Easy",
-        "question": question_id,
     }
     client.post(
-        "/api/questionlogs/",
-        data=json.dumps(create_payload),
+        f"/api/questions/{question_id}/logs/",
+        data=json.dumps(create_payload | {"question": question_id}),
         content_type="application/json",
     )
+    return question_id
 
 
 def _create_tag(client):
@@ -46,36 +50,22 @@ class _OpenQuestionViewSet(QuestionViewSet):
 @pytest.mark.parametrize(
     "endpoint, payload, expected_status",
     [
-        ("/api/questionlogs/", {"title": "New Question", "difficulty": "Easy"}, 400),
-        ("/api/questionlogs/", {}, 400),
         ("/api/tags/", {"name": "New Tag"}, 201),
         ("/api/tags/", {}, 400),
+        ("/api/questions/", {"title": "New Question Title"}, 201),
+        ("/api/questions/", {}, 400),
+        ("/api/questions/", {"title": "Test Question", "slug": "forbidden-slug"}, 400),
     ],
     ids=[
-        "create questionlog with title and difficulty fails",
-        "create questionlog with empty payload fails",
         "create tag with name succeeds",
         "create tag with empty payload fails",
+        "create question with only title succeeds",
+        "create question with empty payload fails",
+        "create question with forbidden slug fails",
     ],
 )
 def test_create_views(client, endpoint, payload, expected_status):
-    # If testing questionlogs, ensure a question exists and add its ID to the payload
-    if endpoint == "/api/questionlogs/" and expected_status == 201:
-        question_payload = {
-            "title": "Test Question for Log",
-            "slug": "test-question-for-log",
-            "difficulty": "Easy",
-        }
-        question_response = client.post(
-            "/api/questions/",
-            data=json.dumps(question_payload),
-            content_type="application/json",
-        )
-        assert question_response.status_code == 201
-        question_id = question_response.json()["id"]
-        payload = dict(payload)
-        payload["question"] = question_id
-    # If testing tags, ensure 'name' is present for 201
+    # Handle tags and questions as before
     if endpoint == "/api/tags/" and expected_status == 201 and "name" not in payload:
         payload = dict(payload)
         payload["name"] = "Auto Tag"
@@ -87,14 +77,37 @@ def test_create_views(client, endpoint, payload, expected_status):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "endpoint, method, expected_status",
+    "payload, expected_status",
     [
-        ("/api/questionlogs/", "GET", 200),
-        ("/api/tags/", "GET", 200),
+        ({"title": "New QuestionLog", "difficulty": "Easy"}, 201),
+        ({}, 201),
     ],
     ids=[
-        "list questionlogs returns 200",
+        "create questionlog with title and difficulty succeeds",
+        "create questionlog with empty payload succeeds",
+    ],
+)
+def test_create_questionlog_views(client, payload, expected_status):
+    question_id = _create_question(client).json()["id"]
+    url = f"/api/questions/{question_id}/logs/"
+    response = client.post(
+        url,
+        data=json.dumps(payload | {"question": question_id}),
+        content_type="application/json",
+    )
+    assert response.status_code == expected_status
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "endpoint, method, expected_status",
+    [
+        ("/api/tags/", "GET", 200),
+        ("/api/questions/", "GET", 200),
+    ],
+    ids=[
         "list tags returns 200",
+        "list questions returns 200",
     ],
 )
 def test_list_views(client, endpoint, method, expected_status):
@@ -106,23 +119,22 @@ def test_list_views(client, endpoint, method, expected_status):
 
 
 @pytest.mark.django_db
-def test_user_scoped_list(client):
-    _create_questionlog_and_dependencies(client)
-
-    response = client.get("/api/questionlogs/")
+def test_list_questionlogs_view(client):
+    question_id = _create_questionlog_and_dependencies(client)
+    url = f"/api/questions/{question_id}/logs/"
+    response = client.get(url)
     assert response.status_code == 200
     assert len(response.json()) == 1
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "endpoint, payload, expected_status",
+    "endpoint, payload, expected_status, question_id, log_id",
     [
         (
-            "/api/questionlogs/1/",
+            "logs",
             {
-                # Only fields allowed to be updated on QuestionLog
-                "question": 1,  # required field
+                "question": 1,
                 "date_attempted": "2025-06-10",
                 "time_spent_min": 42,
                 "outcome": "Solved",
@@ -130,58 +142,45 @@ def test_user_scoped_list(client):
                 "self_notes": "Updated log notes.",
             },
             200,
+            None,
+            1,
         ),
     ],
     ids=[
         "update questionlog with all fields succeeds",
     ],
 )
-def test_update_views(client, endpoint, payload, expected_status):
-    if endpoint.startswith("/api/questionlogs/"):
-        _create_questionlog_and_dependencies(client)
+def test_update_questionlog_views(
+    client, endpoint, payload, expected_status, question_id, log_id
+):
+    if question_id is None:
+        question_id = _create_questionlog_and_dependencies(client)
+    url = f"/api/questions/{question_id}/{endpoint}/{log_id}/"
     response = client.put(
-        endpoint, data=json.dumps(payload), content_type="application/json"
+        url,
+        data=json.dumps(payload | {"question": question_id}),
+        content_type="application/json",
     )
-    if endpoint.startswith("/api/questionlogs/"):
-        get_response = client.get(endpoint)
-        assert get_response.status_code == 200
-        data = get_response.json()
-        for key, value in payload.items():
-            if key == "date_attempted":
-                # The API returns ISO datetime, but the test payload is a date string
-                assert data[key].startswith(value)
-            else:
-                assert data[key] == value
     assert response.status_code == expected_status
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "endpoint, expected_status",
+    "endpoint, expected_status, question_id, log_id",
     [
-        ("/api/questionlogs/1/", 204),
-        ("/api/tags/1/", 204),
-        ("/api/questions/1/", 204),
+        ("logs", 204, None, 1),
     ],
     ids=[
         "delete questionlog succeeds",
-        "delete tag succeeds",
-        "delete question succeeds",
     ],
 )
-def test_delete_views(client, endpoint, expected_status):
-    if endpoint.startswith("/api/questionlogs/"):
-        _create_questionlog_and_dependencies(client)
-    elif endpoint.startswith("/api/tags/"):
-        _create_tag(client)
-    elif endpoint.startswith("/api/questions/"):
-        question_payload = {"title": "Delete Me"}
-        client.post(
-            "/api/questions/",
-            data=json.dumps(question_payload),
-            content_type="application/json",
-        )
-    response = client.delete(endpoint)
+def test_delete_questionlog_views(
+    client, endpoint, expected_status, question_id, log_id
+):
+    if question_id is None:
+        question_id = _create_questionlog_and_dependencies(client)
+    url = f"/api/questions/{question_id}/{endpoint}/{log_id}/"
+    response = client.delete(url)
     assert response.status_code == expected_status
 
 
@@ -192,11 +191,17 @@ def test_delete_views(client, endpoint, expected_status):
         ("/api/questions/", {"title": "FizzBuzz", "slug": "fizz-buzz"}, 400),
         ("/api/questions/", {}, 400),
         ("/api/questions/", {"title": "Only Title"}, 201),
+        ("/api/questions/", {"title": "Test Question"}, 201),
+        ("/api/questions/", {}, 400),
+        ("/api/questions/", {"title": "Test Question", "slug": "should-fail"}, 400),
     ],
     ids=[
         "should fail with slug",
         "should fail with empty payload",
         "should create question with only title",
+        "should create question with valid title",
+        "should fail with empty payload",
+        "should fail to create question with forbidden slug",
     ],
 )
 def test_create_question_api(client, endpoint, payload, expected_status):
@@ -252,3 +257,17 @@ def test_question_delete_unit():
         mock_obj=mock_question,
     )
     assert response.status_code in (204, 200)
+
+
+def test_create_questionlog_with_nonexistent_question(client):
+    payload = {
+        "title": "Should Fail",
+        "difficulty": "Easy",
+        "question": 9999,
+    }
+    response = client.post(
+        "/api/questions/9999/logs/",
+        data=json.dumps(payload),
+        content_type="application/json",
+    )
+    assert response.status_code in (400, 404)
