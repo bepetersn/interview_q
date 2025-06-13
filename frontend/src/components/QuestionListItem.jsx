@@ -20,7 +20,7 @@ function QuestionListItem({ question, onEdit, onDelete, onViewLogs }) {
             <span>{question.notes}</span><br/>
             <span>
               Tags:&nbsp;
-              {question.topic_tags && question.topic_tags.map(t => (
+              {question.tags && question.tags.map(t => (
                 <Chip key={t.id || t} label={t.name || t} size="small" sx={{ mr: 0.5 }} component="span" />
               ))}
             </span><br/>

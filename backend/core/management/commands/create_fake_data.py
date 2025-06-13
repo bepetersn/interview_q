@@ -32,7 +32,7 @@ class Command(BaseCommand):
                 solved_count=random.randint(0, 5),
                 last_attempted_at=make_aware(fake.date_time_this_year()),
             )
-            question.topic_tags.set(random.sample(tags, random.randint(1, 5)))
+            question.tags.set(random.sample(tags, random.randint(1, 5)))
             questions.append(question)
 
         # Create QuestionLogs

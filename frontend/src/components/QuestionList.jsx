@@ -8,7 +8,16 @@ import {
   MenuItem,
   Select,
   InputLabel,
-  FormControl
+  FormControl,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  FormControlLabel,
+  Switch,
+  Checkbox,
+  ListItemText
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +36,7 @@ function QuestionList() {
     source: '',
     notes: '',
     difficulty: '',
-    topic_tags: [],
+    tags: [],
     is_active: true,
   });
   const [saving, setSaving] = useState(false);
@@ -68,9 +77,11 @@ function QuestionList() {
     const { slug, ...rest } = question || {};
     setForm(question ? {
       ...rest,
-      topic_tags: question.topic_tags ? question.topic_tags.map(t => t.id) : [],
+      tags: question.tags
+        ? question.tags.map(t => t && t.id).filter(Boolean)
+        : [],
     } : {
-      title: '', source: '', notes: '', difficulty: '', topic_tags: [], is_active: true,
+      title: '', source: '', notes: '', difficulty: '', tags: [], is_active: true,
     });
     setOpen(true);
   };
@@ -78,7 +89,7 @@ function QuestionList() {
   const handleClose = () => {
     setOpen(false);
     setEditQuestion(null);
-    setForm({ title: '', source: '', notes: '', difficulty: '', topic_tags: [], is_active: true });
+    setForm({ title: '', source: '', notes: '', difficulty: '', tags: [], is_active: true });
   };
 
   const handleChange = (e) => {
@@ -87,7 +98,7 @@ function QuestionList() {
   };
 
   const handleTagsChange = (e) => {
-    setForm((f) => ({ ...f, topic_tags: e.target.value }));
+    setForm((f) => ({ ...f, tags: e.target.value }));
   };
 
   const handleSave = async () => {
@@ -96,6 +107,9 @@ function QuestionList() {
     try {
       // Remove slug from payload if present
       const { slug, ...payload } = form;
+      // Filter tags to only include IDs that exist in tags
+      const validTagIds = tags.map(t => t.id);
+      payload.tags = (payload.tags || []).filter(id => validTagIds.includes(id));
       if (!payload.title) throw new Error('Title is required');
       if (editQuestion) {
         await api.put(`questions/${editQuestion.id}/`, payload);
@@ -179,13 +193,16 @@ function QuestionList() {
             <InputLabel>Tags</InputLabel>
             <Select
               multiple
-              name="topic_tags"
-              value={form.topic_tags}
+              name="tags"
+              value={form.tags}
               onChange={handleTagsChange}
               renderValue={(selected) => tags.filter(t => selected.includes(t.id)).map(t => t.name).join(', ')}
             >
               {tags.map((tag) => (
-                <MenuItem key={tag.id} value={tag.id}>{tag.name}</MenuItem>
+                <MenuItem key={tag.id} value={tag.id}>
+                  <Checkbox checked={form.tags.indexOf(tag.id) > -1} />
+                  <ListItemText primary={tag.name} />
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -199,13 +216,19 @@ function QuestionList() {
         </DialogActions>
       </Dialog>
       {/* Tag Management Dialog */}
-      <Dialog open={tagDialogOpen} onClose={() => setTagDialogOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog open={tagDialogOpen} onClose={() => {
+  setTagDialogOpen(false);
+  fetchTags(); // Re-fetch tags after closing tag management
+}} maxWidth="sm" fullWidth>
         <DialogTitle>Manage Tags</DialogTitle>
         <DialogContent>
           <TagList embedded />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setTagDialogOpen(false)}>Close</Button>
+          <Button onClick={() => {
+      setTagDialogOpen(false);
+      fetchTags(); // Re-fetch tags after closing tag management
+    }}>Close</Button>
         </DialogActions>
       </Dialog>
     </div>

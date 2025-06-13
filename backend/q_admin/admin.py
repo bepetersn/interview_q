@@ -14,7 +14,7 @@ class TagAdmin(admin.ModelAdmin):
 #     list_display = ('title', 'difficulty', 'date_attempted', 'needs_review')
 #     list_filter = ('difficulty', 'needs_review', 'date_attempted')
 #     search_fields = ('title', 'source', 'solution_approach')
-#     filter_horizontal = ('topic_tags',)
+#     filter_horizontal = ('tags',)
 
 
 class QAdminConfig(AppConfig):

@@ -62,7 +62,7 @@ class Question(models.Model):
         choices=[("Easy", "Easy"), ("Medium", "Medium"), ("Hard", "Hard")],
         blank=True,
     )
-    topic_tags = models.ManyToManyField(
+    tags = models.ManyToManyField(
         Tag, blank=True, related_name="questions", help_text="Tags for the question"
     )
 
