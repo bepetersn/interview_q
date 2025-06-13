@@ -13,10 +13,12 @@ const LoginPage = ({ onLogin }) => {
     function autoLoginIfPossible() {
         const userData = localStorage.getItem("user");
         const sessionid = getCookie("sessionid");
+        console.log("Auto-login check:", { userData, sessionid });
         if (userData && sessionid) {
             try {
                 const user = JSON.parse(userData);
                 if (user?.username) {
+                    console.log("Triggering onLogin, user:", user, "sessionid:", sessionid);
                     onLogin(user);
                 }
             } catch {}
@@ -40,11 +42,9 @@ const LoginPage = ({ onLogin }) => {
         e.preventDefault();
         setError("");
         try {
-            const csrftoken = getCookie("csrftoken");
             const response = await api.post(
                 "accounts/login/",
-                { username, password },
-                { headers: { "X-CSRFToken": csrftoken } }
+                { username, password }
             );
             localStorage.setItem("user", JSON.stringify(response.data));
             onLogin(response.data);

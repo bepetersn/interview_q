@@ -61,8 +61,9 @@ These routes are covered by the tests in `backend/core/tests` to verify proper d
 
 ## Authentication Workflow
 
-The API now requires a logged‑in user for all core endpoints. Users can be
-created via `/api/auth/register/` by POSTing a `username` and `password`.
-To obtain a session, POST the same credentials to `/api/auth/login/`.
-After logging in, requests to `/api/questions/`, `/api/questionlogs/` and
+The API now requires a logged‑in user for all core endpoints.
+- Users can be created via `/api/accounts/register/` by POSTing a `username` and `password`.
+- To obtain a session, POST the same credentials to `/api/accounts/login/`.
+- After logging in, requests to `/api/questions/`, `/api/questionlogs/` and
 `/api/tags/` will operate only on data belonging to that user.
+- The `/api/accounts/identity/` endpoint returns information about the currently authenticated user. When accessed with a valid session or authentication token, it responds with user details such as username and user ID. This is useful for client applications to confirm the logged-in user's identity and display relevant account information. The browser is expected to send sessionid credentials (`withCredentials`).

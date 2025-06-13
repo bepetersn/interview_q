@@ -20,11 +20,9 @@ const RegisterPage = ({ onRegister }) => {
       return;
     }
     try {
-      const csrftoken = getCookie("csrftoken");
       await api.post(
         "accounts/register/",
         { username, password },
-        { headers: { "X-CSRFToken": csrftoken } }
       );
       setSuccess("Registration successful! You can now log in.");
       if (onRegister) onRegister(username);

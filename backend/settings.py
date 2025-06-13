@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "backend.accounts",
     "drf_spectacular",
     "corsheaders",  # Added for CORS
+    "django_extensions",  # For runserver_plus HTTPS support
 ]
 
 AUTH_USER_MODEL = "auth.User"
@@ -174,18 +175,34 @@ LOGGING = {
 
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
+CORS_ALLOWED_ORIGINS = ["https://127.0.0.1:5173"]
+CSRF_TRUSTED_ORIGINS = ["https://127.0.0.1:5173"]
+
 
 # if DEBUG:
 CORS_ALLOW_CREDENTIALS = (
     True  # Allow cookies (sessionid, csrftoken) to be sent cross-origin
 )
-CSRF_COOKIE_SAMESITE = None  # Allow CSRF cookie to be sent cross-site (for local dev)
-CSRF_COOKIE_SECURE = False  # Allow CSRF cookie over HTTP for local dev
-SESSION_COOKIE_SAMESITE = None
-SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = "None"  # Allow CSRF cookie to be sent cross-site (for local dev)
+CSRF_COOKIE_SECURE = True  # Allow CSRF cookie over HTTP for local dev
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True  # Must have for cross-origin cookies
 
+
+# Session settings
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 14  # 2 weeks in seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Do not expire session on browser close
+
+
+# Use Memcached for session and cache backend
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -196,10 +213,6 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API documentation for the Interview Questions app",
     "VERSION": "1.0.0",
 }
-if env_origins := os.environ.get("CORS_ALLOWED_ORIGINS"):
-    CORS_ALLOWED_ORIGINS.extend(
-        [o.strip() for o in env_origins.split(",") if o.strip()]
-    )
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -210,9 +223,3 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API documentation for the Interview Questions app",
     "VERSION": "1.0.0",
 }
-
-# Load CORS_ALLOWED_ORIGINS from environment variable if set
-if env_origins := os.environ.get("CORS_ALLOWED_ORIGINS"):
-    CORS_ALLOWED_ORIGINS.extend(
-        [o.strip() for o in env_origins.split(",") if o.strip()]
-    )

@@ -9,10 +9,14 @@ from django.contrib.auth.models import User
 from django.test import Client
 
 
-BASE_URL = "http://localhost:8000/api"
+BASE_URL = "https://127.0.0.1:8000/api"
+
+REQUESTS_VERIFY = (
+    False  # Set to False to disable SSL verification globally for local/dev
+)
 
 
-def is_server_running(host="localhost", port=8000):
+def is_server_running(host="127.0.0.1", port=8000):
     try:
         with socket.create_connection((host, port), timeout=1):
             return True
@@ -20,7 +24,7 @@ def is_server_running(host="localhost", port=8000):
         return False
 
 
-def wait_for_server(host="localhost", port=8000, timeout=15):
+def wait_for_server(host="127.0.0.1", port=8000, timeout=15):
     start = time.time()
     while time.time() - start < timeout:
         if is_server_running(host, port):
@@ -54,6 +58,7 @@ def registered_user(db):
         reg_resp = session.post(
             f"{BASE_URL}/accounts/register/",
             json={"username": username, "password": password},
+            verify=REQUESTS_VERIFY,
         )
         reg_resp.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -69,11 +74,12 @@ def logged_in_session(django_server_url, registered_user):
     resp = session.post(
         f"{django_server_url}/api/accounts/login/",
         json={"username": username, "password": password},
+        verify=REQUESTS_VERIFY,
     )
     assert resp.status_code in (200, 201, 204), f"Auth failed: {resp.text}"
     csrf_token = session.cookies.get("csrftoken")
     if csrf_token:
-        session.headers.update({"X-CSRFToken": csrf_token})
+        session.headers.update({"X-CSRFToken": csrf_token, "Referer": BASE_URL})
     return session, username
 
 
@@ -99,22 +105,25 @@ def create_and_cleanup_user(username, password):
     resp = session.post(
         f"{BASE_URL}/accounts/register/",
         json={"username": username, "password": password},
+        verify=REQUESTS_VERIFY,
     )
     assert resp.status_code in (200, 201, 204), f"Register failed: {resp.text}"
     resp = session.post(
         f"{BASE_URL}/accounts/login/",
         json={"username": username, "password": password},
+        verify=REQUESTS_VERIFY,
     )
     assert resp.status_code in (200, 201, 204), f"Login failed: {resp.text}"
     csrf_token = session.cookies.get("csrftoken")
     if csrf_token:
-        session.headers.update({"X-CSRFToken": csrf_token})
+        session.headers.update({"X-CSRFToken": csrf_token, "Referer": BASE_URL})
 
     def cleanup():
         try:
             session.post(
                 f"{BASE_URL}/accounts/delete/",
                 json={"username": username, "password": password},
+                verify=REQUESTS_VERIFY,
             )
         except Exception as cleanup_exc:
             print(f"Cleanup failed for {username}: {cleanup_exc}")

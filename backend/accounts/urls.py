@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterViewSet, LoginViewSet, LogoutViewSet
+from .views import RegisterViewSet, LoginViewSet, LogoutViewSet, IdentityView
 
 urlpatterns = [
     path(
@@ -16,5 +16,10 @@ urlpatterns = [
         "accounts/logout/",
         LogoutViewSet.as_view({"post": "create"}),
         name="accounts-logout",
+    ),
+    path(
+        "accounts/identity/",
+        IdentityView.as_view(),
+        name="accounts-whoami",
     ),
 ]

@@ -15,4 +15,4 @@ def django_server_url():
     """
     Provides the base URL for the Django live server for integration tests.
     """
-    return "http://localhost:8000"
+    return "https://127.0.0.1:8000"

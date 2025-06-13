@@ -1,4 +1,4 @@
-from fixtures import BASE_URL
+from fixtures import BASE_URL, REQUESTS_VERIFY
 
 # flake8: noqa
 
@@ -9,6 +9,7 @@ def test_auth_end_to_end(ensure_server, registered_user):
     resp = session.post(
         f"{BASE_URL}/accounts/login/",
         json={"username": username, "password": password},
+        verify=REQUESTS_VERIFY,
     )
     assert resp.status_code in (200, 201, 204), f"Login failed: {resp.text}"
 
@@ -19,5 +20,7 @@ def test_auth_end_to_end(ensure_server, registered_user):
     # Logout (with CSRF token)
     csrf_token = session.cookies.get("csrftoken")
     headers = {"X-CSRFToken": csrf_token} if csrf_token else {}
-    resp = session.post(f"{BASE_URL}/accounts/logout/", headers=headers)
+    resp = session.post(
+        f"{BASE_URL}/accounts/logout/", headers=headers, verify=REQUESTS_VERIFY
+    )
     assert resp.status_code in (200, 201, 204), f"Logout failed: {resp.text}"

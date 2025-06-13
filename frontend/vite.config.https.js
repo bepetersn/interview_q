@@ -1,3 +1,4 @@
+// This script reads dev.crt and dev.key from the project root and starts Vite with HTTPS enabled.
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import fs from 'fs'

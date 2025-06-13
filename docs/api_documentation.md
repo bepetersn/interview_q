@@ -4,8 +4,8 @@ This project uses **drf-spectacular** to generate OpenAPI documentation.
 
 ## Accessing the Docs
 
-- **Schema (JSON):** `http://localhost:8000/api/schema/`
-- **Swagger UI:** `http://localhost:8000/api/docs/`
+- **Schema (JSON):** `http://127.0.0.1:8000/api/schema/`
+- **Swagger UI:** `http://127.0.0.1:8000/api/docs/`
 
 Run the Django development server and visit the above URLs in your browser to view the OpenAPI schema or interactive UI.
 

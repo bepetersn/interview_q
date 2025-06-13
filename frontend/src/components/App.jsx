@@ -27,6 +27,7 @@ function App() {
 
     // Keep user state and localStorage in sync on login/logout
     const handleLogin = (userObj) => {
+        console.log("handleLogin. Setting user:", userObj);
         if (userObj) {
             localStorage.setItem("user", JSON.stringify(userObj));
             setUser(userObj);
@@ -38,6 +39,7 @@ function App() {
 
     // On every page load, re-sync user state from localStorage and sessionid
     React.useEffect(() => {
+        console.log("App useEffect. Checking user state...");
         const userData = localStorage.getItem("user");
         const sessionid = document.cookie
             .split(';')

@@ -1,14 +1,8 @@
 django
 djangorestframework
 requests
-<<<<<<< HEAD
-drf-spectacular
-=======
 gunicorn
 whitenoise
 django-cors-headers
-<<<<<<< HEAD
->>>>>>> 20f7797 (Add deployment configuration)
-=======
 drf-spectacular
->>>>>>> e89ccce (Add drf-spectacular API docs)
+pyOpenSSL
