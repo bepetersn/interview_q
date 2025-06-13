@@ -17,6 +17,8 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Box,
+  Chip,
 } from '@mui/material';
 import { Delete, Edit, Add } from '@mui/icons-material';
 import api from '../api';
@@ -45,16 +47,18 @@ function QuestionLogList() {
       setLogs(res.data);
     } catch (e) {
       setLogs([]);
+      console.error('Failed to fetch logs:', e);
     }
     setLoading(false);
   };
 
   const fetchQuestions = async () => {
     try {
-      const res = await api.get('apiquestions/');
+      const res = await api.get('questions/');
       setQuestions(res.data);
     } catch (e) {
       setQuestions([]);
+      console.error('Failed to fetch questions:', e);
     }
   };
 
@@ -96,7 +100,9 @@ function QuestionLogList() {
       }
       fetchLogs();
       handleClose();
-    } catch (e) {}
+    } catch (e) {
+      console.error('Failed to save log:', e);
+    }
     setSaving(false);
   };
 
@@ -106,11 +112,28 @@ function QuestionLogList() {
     fetchLogs();
   };
 
-  const questionTitle = questions.find(q => String(q.id) === String(questionId))?.title;
+  const question = questions.find(q => String(q.id) === String(questionId));
 
   return (
     <div>
-      <Typography variant="h4" gutterBottom>Attempts / Logs {questionTitle && `for "${questionTitle}"`}</Typography>
+      <Typography variant="h4" gutterBottom>Question Details</Typography>
+      {question && (
+        <Box mb={3} p={2} sx={{ background: '#f9f9f9', borderRadius: 2 }}>
+          <Typography variant="h5" gutterBottom>{question.title}</Typography>
+          <Typography variant="subtitle1" gutterBottom>Difficulty: {question.difficulty || 'N/A'}</Typography>
+          {question.source && <Typography variant="body2" gutterBottom>Source: {question.source}</Typography>}
+          {question.notes && <Typography variant="body1" gutterBottom>Notes: {question.notes}</Typography>}
+          {question.tags && question.tags.length > 0 && (
+            <Box mt={1}>
+              <Typography variant="body2" component="span">Tags: </Typography>
+              {question.tags.map((tag) => (
+                <Chip key={tag.id || tag} label={tag.name || tag} size="small" sx={{ mr: 0.5 }} />
+              ))}
+            </Box>
+          )}
+        </Box>
+      )}
+      <Typography variant="h4" gutterBottom>Attempts / Logs</Typography>
       <Button variant="contained" startIcon={<Add />} onClick={() => handleOpen()} sx={{ mb: 2 }}>Add Log</Button>
       {loading ? <CircularProgress /> : (
         <List>

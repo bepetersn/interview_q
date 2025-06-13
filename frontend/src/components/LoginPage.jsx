@@ -18,7 +18,6 @@ const LoginPage = (props) => {
                 "accounts/login/",
                 { username, password }
             );
-            // localStorage.setItem("user", JSON.stringify(response.data));
             onLogin(response.data);
         } catch (err) {
             setError(

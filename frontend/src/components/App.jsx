@@ -70,14 +70,16 @@ function App() {
             <Box>
                 <AppBar position="fixed">
                     <Toolbar>
-                        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                            InterviewQ
+                        <Typography variant="h6" sx={{ flexGrow: 0, mr: 2, pl: 0, textAlign: 'left' }}>
+                            <Button color="inherit" component={Link} to="/" sx={{ p: 0, minWidth: 0, textTransform: 'none', fontWeight: 700, fontSize: '1.25rem', justifyContent: 'flex-start' }}>
+                                InterviewQ
+                            </Button>
                         </Typography>
-                        <Button color="inherit" component={Link} to="/">Questions</Button>
+                        <Box sx={{ flexGrow: 1 }} />
                         <Button color="inherit" onClick={handleLogout}>Logout</Button>
                     </Toolbar>
                 </AppBar>
-                <Container sx={{ mt: { xs: 7, sm: 8 } }}>
+                <Container sx={{ mt: { xs: 10, sm: 12 }, width: '100vw', minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minHeight: '90vh', justifyContent: 'flex-start', pl: 2, boxSizing: 'border-box' }}>
                     <Routes>
                         <Route path="/" element={<QuestionList />} />
                         <Route path="/logs/:questionId" element={<QuestionLogList />} />
