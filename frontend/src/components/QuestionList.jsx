@@ -3,28 +3,18 @@ import {
   Typography,
   Button,
   List,
-  ListItem,
-  ListItemText,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Switch,
-  FormControlLabel,
   CircularProgress,
-  Chip,
   Box,
   MenuItem,
   Select,
   InputLabel,
   FormControl
 } from '@mui/material';
-import { Delete, Edit, Add, ListAlt } from '@mui/icons-material';
+import { Add } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import TagList from './TagList.jsx';
+import QuestionListItem from './QuestionListItem.jsx';
 
 function QuestionList() {
   const [questions, setQuestions] = useState([]);
@@ -42,6 +32,7 @@ function QuestionList() {
   });
   const [saving, setSaving] = useState(false);
   const [tagDialogOpen, setTagDialogOpen] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const fetchQuestions = async () => {
@@ -73,8 +64,10 @@ function QuestionList() {
 
   const handleOpen = (question = null) => {
     setEditQuestion(question);
+    // Remove slug if present
+    const { slug, ...rest } = question || {};
     setForm(question ? {
-      ...question,
+      ...rest,
       topic_tags: question.topic_tags ? question.topic_tags.map(t => t.id) : [],
     } : {
       title: '', source: '', notes: '', difficulty: '', topic_tags: [], is_active: true,
@@ -99,8 +92,11 @@ function QuestionList() {
 
   const handleSave = async () => {
     setSaving(true);
+    setError("");
     try {
-      const payload = { ...form };
+      // Remove slug from payload if present
+      const { slug, ...payload } = form;
+      if (!payload.title) throw new Error('Title is required');
       if (editQuestion) {
         await api.put(`questions/${editQuestion.id}/`, payload);
       } else {
@@ -109,16 +105,48 @@ function QuestionList() {
       fetchQuestions();
       handleClose();
     } catch (e) {
-      console.error("Error saving question:", e);
+      setError(e?.response?.data?.detail || e.message || 'Error saving question.');
     }
     setSaving(false);
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this question?')) return;
-    await api.delete(`questions/${id}/`);
-    fetchQuestions();
+    setError("");
+    try {
+      await api.delete(`questions/${id}/`);
+      fetchQuestions();
+    } catch (e) {
+      setError(e?.response?.data?.detail || e.message || 'Error deleting question.');
+    }
   };
+
+  // Helper to render the questions list or empty/loading state
+  function renderQuestionsList() {
+    if (loading) {
+      return <CircularProgress />;
+    }
+    if (questions.length === 0) {
+      return (
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+          No questions found. Click "Add Question" to create your first one.
+        </Typography>
+      );
+    }
+    return (
+      <List>
+        {questions.map((q) => (
+          <QuestionListItem
+            key={q.id}
+            question={q}
+            onEdit={handleOpen}
+            onDelete={handleDelete}
+            onViewLogs={(id) => navigate(`/logs/${id}`)}
+          />
+        ))}
+      </List>
+    );
+  }
 
   return (
     <div>
@@ -127,38 +155,10 @@ function QuestionList() {
         <Button variant="outlined" startIcon={<Add />} onClick={() => handleOpen()} sx={{ mb: 2 }}>Add Question</Button>
       </Box>
       <Button variant="text" onClick={() => setTagDialogOpen(true)} sx={{ mb: 2 }}>Manage Tags</Button>
-      {loading ? <CircularProgress /> : (
-        <List>
-          {questions.map((q) => (
-            <ListItem key={q.id} alignItems="flex-start" secondaryAction={
-              <Box>
-                <IconButton edge="end" onClick={() => handleOpen(q)}><Edit /></IconButton>
-                <IconButton edge="end" onClick={() => handleDelete(q.id)}><Delete /></IconButton>
-                <IconButton edge="end" onClick={() => navigate(`/logs/${q.id}`)} title="View Attempts"><ListAlt /></IconButton>
-              </Box>
-            }>
-              <ListItemText
-                primary={<Box>
-                  <b>{q.title}</b> <Chip label={q.difficulty} size="small" sx={{ ml: 1 }} />
-                </Box>}
-                secondary={
-                  <>
-                    <span>{q.notes}</span><br/>
-                    <span>
-                      Tags:&nbsp;
-                      {q.topic_tags && q.topic_tags.map(t => (
-                        <Chip key={t.id} label={t.name} size="small" sx={{ mr: 0.5 }} component="span" />
-                      ))}
-                    </span><br/>
-                    <span>Status: {q.is_active ? 'Active' : 'Inactive'}</span>
-                  </>
-                }
-                slotProps={{ secondary: { component: 'div' } }}
-              />
-            </ListItem>
-          ))}
-        </List>
+      {error && (
+        <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
       )}
+      {renderQuestionsList()}
       {/* Question CRUD Dialog */}
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>{editQuestion ? 'Edit Question' : 'Add Question'}</DialogTitle>
@@ -193,7 +193,9 @@ function QuestionList() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+          <Button onClick={handleSave} disabled={saving || !form.title}>
+            {saving ? 'Saving...' : 'Save'}
+          </Button>
         </DialogActions>
       </Dialog>
       {/* Tag Management Dialog */}

@@ -1,42 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../App.css";
 import api from "../api";
-import RegisterPage from "./RegisterPage";
-import { getCookie } from "../utils.js";
 
-const LoginPage = ({ onLogin }) => {
-    const [showRegister, setShowRegister] = useState(false);
+const LoginPage = (props) => {
+    const { onLogin } = props || {};
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-
-    function autoLoginIfPossible() {
-        const userData = localStorage.getItem("user");
-        const sessionid = getCookie("sessionid");
-        console.log("Auto-login check:", { userData, sessionid });
-        if (userData && sessionid) {
-            try {
-                const user = JSON.parse(userData);
-                if (user?.username) {
-                    console.log("Triggering onLogin, user:", user, "sessionid:", sessionid);
-                    onLogin(user);
-                }
-            } catch {}
-        }
-    }
-
-    useEffect(autoLoginIfPossible, [onLogin]);
-
-    if (showRegister) {
-        return (
-            <RegisterPage
-                onRegister={(username) => {
-                    setShowRegister(false);
-                    setUsername(username);
-                }}
-            />
-        );
-    }
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -46,7 +18,7 @@ const LoginPage = ({ onLogin }) => {
                 "accounts/login/",
                 { username, password }
             );
-            localStorage.setItem("user", JSON.stringify(response.data));
+            // localStorage.setItem("user", JSON.stringify(response.data));
             onLogin(response.data);
         } catch (err) {
             setError(
@@ -66,6 +38,7 @@ const LoginPage = ({ onLogin }) => {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
+                    autoComplete="username"
                 />
                 <input
                     type="password"
@@ -73,12 +46,13 @@ const LoginPage = ({ onLogin }) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    autoComplete="current-password"
                 />
                 <button type="submit">Login</button>
                 <button
                     type="button"
                     style={{ marginTop: "0.5rem" }}
-                    onClick={() => setShowRegister(true)}
+                    onClick={() => navigate("/register")}
                 >
                     Register
                 </button>

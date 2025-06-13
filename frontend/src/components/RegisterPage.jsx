@@ -1,15 +1,16 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../login.css";
 import api from "../api";
-import { getCookie } from "../utils.js";
 
 
-const RegisterPage = ({ onRegister }) => {
+const RegisterPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +26,7 @@ const RegisterPage = ({ onRegister }) => {
         { username, password },
       );
       setSuccess("Registration successful! You can now log in.");
-      if (onRegister) onRegister(username);
+      setTimeout(() => navigate("/"), 1200);
     } catch (err) {
       setError(
         err.response?.data?.detail || err.message || "Registration failed."

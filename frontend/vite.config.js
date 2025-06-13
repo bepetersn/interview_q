@@ -3,8 +3,9 @@ import react from '@vitejs/plugin-react'
 import fs from 'fs'
 import path from 'path'
 
-const cert = fs.readFileSync(path.resolve(__dirname, '../dev.crt'))
-const key = fs.readFileSync(path.resolve(__dirname, '../dev.key'))
+// Always read cert/key from project root
+const cert = fs.readFileSync(path.resolve(__dirname, '../example.com+5.pem'))
+const key = fs.readFileSync(path.resolve(__dirname, '../example.com+5-key.pem'))
 
 export default defineConfig({
   plugins: [react()],

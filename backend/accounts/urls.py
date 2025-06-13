@@ -20,6 +20,6 @@ urlpatterns = [
     path(
         "accounts/identity/",
         IdentityView.as_view(),
-        name="accounts-whoami",
+        name="accounts-identity",
     ),
 ]
