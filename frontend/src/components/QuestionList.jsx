@@ -14,8 +14,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  FormControlLabel,
-  Switch,
   Checkbox,
   ListItemText
 } from '@mui/material';
@@ -36,7 +34,7 @@ function QuestionList() {
     source: '',
     notes: '',
     difficulty: '',
-    tags: [],
+    tag_ids: [],
     is_active: true,
   });
   const [saving, setSaving] = useState(false);
@@ -73,15 +71,12 @@ function QuestionList() {
 
   const handleOpen = (question = null) => {
     setEditQuestion(question);
-    // Remove slug if present
     const { slug, ...rest } = question || {};
     setForm(question ? {
       ...rest,
-      tags: question.tags
-        ? question.tags.map(t => t && t.id).filter(Boolean)
-        : [],
+      tag_ids: question.tags ? question.tags.map(t => t.id) : [],
     } : {
-      title: '', source: '', notes: '', difficulty: '', tags: [], is_active: true,
+      title: '', source: '', notes: '', difficulty: '', tag_ids: [], is_active: true,
     });
     setOpen(true);
   };
@@ -89,7 +84,7 @@ function QuestionList() {
   const handleClose = () => {
     setOpen(false);
     setEditQuestion(null);
-    setForm({ title: '', source: '', notes: '', difficulty: '', tags: [], is_active: true });
+    setForm({ title: '', source: '', notes: '', difficulty: '', tag_ids: [], is_active: true });
   };
 
   const handleChange = (e) => {
@@ -98,18 +93,15 @@ function QuestionList() {
   };
 
   const handleTagsChange = (e) => {
-    setForm((f) => ({ ...f, tags: e.target.value }));
+    setForm((f) => ({ ...f, tag_ids: e.target.value }));
   };
 
   const handleSave = async () => {
     setSaving(true);
     setError("");
     try {
-      // Remove slug from payload if present
       const { slug, ...payload } = form;
-      // Filter tags to only include IDs that exist in tags
-      const validTagIds = tags.map(t => t.id);
-      payload.tags = (payload.tags || []).filter(id => validTagIds.includes(id));
+      payload.tag_ids = (payload.tag_ids || []).filter(id => tags.some(t => t.id === id));
       if (!payload.title) throw new Error('Title is required');
       if (editQuestion) {
         await api.put(`questions/${editQuestion.id}/`, payload);
@@ -164,15 +156,19 @@ function QuestionList() {
 
   return (
     <div>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Typography variant="h4" gutterBottom>Questions</Typography>
-        <Button variant="outlined" startIcon={<Add />} onClick={() => handleOpen()} sx={{ mb: 2 }}>Add Question</Button>
+      <Box display="flex" flexDirection="column" alignItems="flex-start" mb={2}>
+        <Typography variant="h4" gutterBottom sx={{ mb: 1, ml: 1 }}>Questions</Typography>
+        <Button variant="outlined" startIcon={<Add />} onClick={() => handleOpen()} sx={{ mb: 1, ml: 1 }}>
+          Add Question
+        </Button>
       </Box>
-      <Button variant="text" onClick={() => setTagDialogOpen(true)} sx={{ mb: 2 }}>Manage Tags</Button>
+      <Button variant="text" onClick={() => setTagDialogOpen(true)} sx={{ mb: 2, ml: 1 }}>Manage Tags</Button>
       {error && (
-        <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
+        <Typography color="error" sx={{ mb: 2, ml: 1 }}>{error}</Typography>
       )}
-      {renderQuestionsList()}
+      <Box sx={{ width: '50vw', maxWidth: '50vw', ml: 1, boxSizing: 'border-box' }}>
+        {renderQuestionsList()}
+      </Box>
       {/* Question CRUD Dialog */}
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>{editQuestion ? 'Edit Question' : 'Add Question'}</DialogTitle>
@@ -193,20 +189,19 @@ function QuestionList() {
             <InputLabel>Tags</InputLabel>
             <Select
               multiple
-              name="tags"
-              value={form.tags}
+              name="tag_ids"
+              value={form.tag_ids}
               onChange={handleTagsChange}
               renderValue={(selected) => tags.filter(t => selected.includes(t.id)).map(t => t.name).join(', ')}
             >
               {tags.map((tag) => (
                 <MenuItem key={tag.id} value={tag.id}>
-                  <Checkbox checked={form.tags.indexOf(tag.id) > -1} />
+                  <Checkbox checked={form.tag_ids.indexOf(tag.id) > -1} />
                   <ListItemText primary={tag.name} />
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-          <FormControlLabel control={<Switch checked={form.is_active} name="is_active" onChange={handleChange} />} label="Active" />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
