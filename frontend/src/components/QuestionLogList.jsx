@@ -51,7 +51,7 @@ function QuestionLogList() {
 
   const fetchQuestions = async () => {
     try {
-      const res = await api.get('apiquestions/');
+      const res = await api.get('questions/');
       setQuestions(res.data);
     } catch (e) {
       setQuestions([]);

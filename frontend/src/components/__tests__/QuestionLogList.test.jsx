@@ -1,13 +1,19 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import QuestionLogList from '../QuestionLogList.jsx';
 import api from '../../api';
 
-jest.mock('../../api');
+import { vi } from 'vitest';
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: () => ({ questionId: '1' }),
-}));
+vi.mock('../../api');
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useParams: () => ({ questionId: '1' }),
+  };
+});
 
 const mockLog = {
   id: 1,
@@ -25,7 +31,7 @@ test('fetches and displays question logs', async () => {
 
   render(<QuestionLogList />);
 
-  expect(api.get).toHaveBeenNthCalledWith(1, 'questionlogs/', { params: { question: '1' } });
+  expect(api.get).toHaveBeenNthCalledWith(1, 'questions/1/logs/');
   expect(api.get).toHaveBeenNthCalledWith(2, 'questions/');
   expect(await screen.findByText('Question1')).toBeInTheDocument();
   expect(await screen.findByText('Outcome: Solved')).toBeInTheDocument();

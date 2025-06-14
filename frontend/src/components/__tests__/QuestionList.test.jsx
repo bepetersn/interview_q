@@ -1,9 +1,12 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import QuestionList from '../QuestionList.jsx';
 import api from '../../api';
 
-jest.mock('../../api');
+import { vi } from 'vitest';
+
+vi.mock('../../api');
 
 const mockQuestion = {
   id: 1,
@@ -26,7 +29,7 @@ test('fetches and displays questions', async () => {
     </MemoryRouter>
   );
 
-  expect(api.get).toHaveBeenCalledWith('questions/');
-  await waitFor(() => expect(api.get).toHaveBeenCalledWith('tags/'));
+  expect(api.get).toHaveBeenNthCalledWith(1, 'questions/');
+  expect(api.get).toHaveBeenNthCalledWith(2, 'tags/');
   expect(await screen.findByText('Sample Question')).toBeInTheDocument();
 });
