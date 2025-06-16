@@ -29,14 +29,21 @@ jobs:
           pip install -r requirements.txt -r requirements.dev.txt
 
       - name: Set up environment variables
+        permissions:
+          contents: write
         run: |
           echo "SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" >> $GITHUB_ENV
-          echo "DATABASE_URL=sqlite:///:memory:" >> $GITHUB_ENV
+          echo "DATABASE_URL=sqlite:///db/db.sqlite3" >> $GITHUB_ENV  # make default explicit
           echo "DEBUG=True" >> $GITHUB_ENV
           echo "ALLOWED_HOSTS=*" >> $GITHUB_ENV
 
-      - name: Run sqlite3 migrations
-        run: python manage.py migrate
+      - name: Create database & apply migrations
+        run: |
+          pwd
+          ls -la .
+          mkdir -p backend/db/
+          python manage.py migrate
+          ls -la backend/db/db.sqlite3
 
       # TODO: Add a step to collect static files if needed
 
@@ -44,6 +51,8 @@ jobs:
         run: ./runssl.sh &
 
       - name: Run backend tests
+        # permissions:
+        #   contents: write
         run: pytest
 
       - name: Set up Node
