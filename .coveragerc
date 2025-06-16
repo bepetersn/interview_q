@@ -1,0 +1,11 @@
+[run]
+branch = True
+source =
+    backend
+
+[report]
+omit =
+    */tests/*
+    */migrations/*
+    manage.py
+    backend/test_common/fixtures.py

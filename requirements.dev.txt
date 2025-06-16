@@ -3,5 +3,7 @@ flake8
 black
 pep8
 pytest-django
+pytest-cov
+playwright
 pre-commit
 werkzeug
