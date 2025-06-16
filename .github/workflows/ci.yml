@@ -30,10 +30,9 @@ jobs:
 
       - name: Set up environment variables
         run: |
-          echo SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))') >> $GITHUB_ENV
-          echo DATABASE_URL=sqlite:///db/db.sqlite3 >> $GITHUB_ENV
-          echo DEBUG=True >> $GITHUB_ENV
-          echo ALLOWED_HOSTS=* >> $GITHUB_ENV
+          echo DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))') >> $GITHUB_ENV
+          echo DJANGO_DEBUG=True >> $GITHUB_ENV
+          echo DJANGO_ALLOWED_HOSTS=* >> $GITHUB_ENV
 
       - name: Create database & apply migrations
         run: |
