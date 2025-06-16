@@ -16,13 +16,24 @@ jobs:
         with:
           python-version: '3.11'
 
+
+      # TODO: needed?
+      # - name: Install additional system dependencies
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y libpq-dev libffi-dev libssl-dev build-essential
+
+
       - name: Install Python dependencies
         run: |
-          pip install -r requirements.txt -r requirements.dev
+          pip install -r requirements.txt -r requirements.dev.txt
 
-      - name: Generate secret key
+      - name: Set up environment variables
         run: |
           echo "SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" >> $GITHUB_ENV
+          echo "DATABASE_URL=sqlite:///db.sqlite3" >> $GITHUB_ENV
+          echo "DEBUG=True" >> $GITHUB_ENV
+          echo "ALLOWED_HOSTS=*" >> $GITHUB_ENV
 
       - name: Run sqlite3 migrations
         run: python manage.py migrate
