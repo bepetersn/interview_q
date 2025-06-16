@@ -29,8 +29,7 @@ jobs:
 
       # TODO: Add a step to collect static files if needed
 
-      - name: Start backend server
-        comment: "Start the backend server for integration tests"
+      - name: Start backend server for integration tests
         run: ./runssl.sh &
 
       - name: Run backend tests
