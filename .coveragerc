@@ -8,3 +8,4 @@ omit =
     */tests/*
     */migrations/*
     manage.py
+    backend/test_common/fixtures.py
