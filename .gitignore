@@ -4,3 +4,4 @@ backend/db/db.sqlite3
 .env
 node_modules/
 *.pem
+.dccache

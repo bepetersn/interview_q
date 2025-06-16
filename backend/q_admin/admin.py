@@ -1,5 +1,6 @@
-from django.contrib import admin
 from django.apps import AppConfig
+from django.contrib import admin
+
 from backend.core.models import Tag
 
 

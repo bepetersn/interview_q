@@ -1,8 +1,10 @@
-from django.core.management.base import BaseCommand
-from backend.core.models import Tag, Question, QuestionLog
-from faker import Faker
 import random
+
+from django.core.management.base import BaseCommand
 from django.utils.timezone import make_aware
+from faker import Faker
+
+from backend.core.models import Question, QuestionLog, Tag
 
 
 class Command(BaseCommand):

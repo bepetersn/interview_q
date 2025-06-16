@@ -1,5 +1,6 @@
 import json
-from unittest.mock import patch, MagicMock, PropertyMock
+from unittest.mock import MagicMock, PropertyMock, patch
+
 from rest_framework.test import APIRequestFactory
 
 

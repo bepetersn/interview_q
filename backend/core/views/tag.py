@@ -1,7 +1,9 @@
-from rest_framework import generics, permissions
-from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
 import logging
+
+from rest_framework import generics, permissions
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+
 from ..models import Tag
 from ..serializers import TagSerializer
 

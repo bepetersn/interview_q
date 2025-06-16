@@ -1,10 +1,7 @@
-from aws_cdk import (
-    Stack,
-    aws_sqs as sqs,
-    aws_lambda as _lambda,
-    aws_iam as iam,
-    Duration,
-)
+from aws_cdk import Duration, Stack
+from aws_cdk import aws_iam as iam
+from aws_cdk import aws_lambda as _lambda
+from aws_cdk import aws_sqs as sqs
 from constructs import Construct
 
 

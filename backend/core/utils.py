@@ -1,14 +1,15 @@
 import hashlib
 import time
+
 from django.utils.text import slugify
 
 
-# flake8: noqa
 class SlugGenerator:
     @staticmethod
     def generate_slug_candidate(base_slug):
         now = str(time.time()).encode("utf-8")
-        hash_suffix = hashlib.sha1(now).hexdigest()[:8]
+        # Use SHA256 instead of SHA1 for better security
+        hash_suffix = hashlib.sha256(now).hexdigest()[:8]
         return f"{base_slug}-{hash_suffix}", hash_suffix
 
     @staticmethod

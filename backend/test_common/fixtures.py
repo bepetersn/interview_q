@@ -1,13 +1,13 @@
-import pytest
-import requests
-import time
+import os
 import socket
 import subprocess
-import os
-from django.core.management import call_command
-from django.contrib.auth.models import User
-from django.test import Client
+import time
 
+import pytest
+import requests
+from django.contrib.auth.models import User
+from django.core.management import call_command
+from django.test import Client
 
 BASE_URL = "https://127.0.0.1:8000/api"
 
