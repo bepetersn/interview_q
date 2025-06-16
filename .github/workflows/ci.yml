@@ -8,6 +8,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -16,21 +18,17 @@ jobs:
         with:
           python-version: '3.11'
 
-
       # TODO: needed?
       # - name: Install additional system dependencies
       #   run: |
       #     sudo apt-get update
       #     sudo apt-get install -y libpq-dev libffi-dev libssl-dev build-essential
 
-
       - name: Install Python dependencies
         run: |
           pip install -r requirements.txt -r requirements.dev.txt
 
       - name: Set up environment variables
-        permissions:
-          contents: write
         run: |
           echo "SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" >> $GITHUB_ENV
           echo "DATABASE_URL=sqlite:///db/db.sqlite3" >> $GITHUB_ENV  # make default explicit
@@ -51,8 +49,6 @@ jobs:
         run: ./runssl.sh &
 
       - name: Run backend tests
-        # permissions:
-        #   contents: write
         run: pytest
 
       - name: Set up Node
