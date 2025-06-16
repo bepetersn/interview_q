@@ -1,4 +1,9 @@
 repos:
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+    - id: codespell
+      args: ['--exclude=frontend/package-lock.json']
   - repo: https://github.com/pycqa/isort
     rev: 6.0.1
     hooks:
@@ -47,7 +52,3 @@ repos:
     rev: v3.76.3
     hooks:
       - id: trufflehog
-  - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
-    hooks:
-    - id: codespell
