@@ -1,11 +1,10 @@
-import boto3
-import logging
-import json
 import datetime
+import json
+import logging
+
+import boto3
 
 logger = logging.getLogger(__name__)
-
-# flake8: noqa
 
 
 def get_sqs_client(region_name=None):

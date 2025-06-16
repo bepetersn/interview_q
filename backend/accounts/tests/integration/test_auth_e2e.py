@@ -1,4 +1,4 @@
-from fixtures import BASE_URL, REQUESTS_VERIFY
+from backend.test_common.fixtures import BASE_URL, REQUESTS_VERIFY
 
 # flake8: noqa
 

@@ -1,4 +1,14 @@
 repos:
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+    - id: codespell
+      args: ['--exclude=frontend/package-lock.json']
+  - repo: https://github.com/pycqa/isort
+    rev: 6.0.1
+    hooks:
+      - id: isort
+        name: isort (python)
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
@@ -16,3 +26,29 @@ repos:
       - id: trailing-whitespace
       - id: check-yaml
       - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-json
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+    -   id: pyupgrade
+  - repo: https://github.com/pycqa/bandit
+    rev: 1.8.3
+    hooks:
+      - id: bandit
+        pass_filenames: false
+        args: [
+          'backend',
+          '-r',
+          '-x', 'backend/core/tests,backend/accounts/tests,backend/test_common',
+          --severity-level=high,
+        ]
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.6.27
+    hooks:
+      - id: actionlint
+  - repo: https://github.com/trufflesecurity/truffleHog
+    rev: v3.76.3
+    hooks:
+      - id: trufflehog

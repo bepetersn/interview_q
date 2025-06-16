@@ -19,4 +19,3 @@ The backend exposes REST endpoints for deleting data:
 - `DELETE /api/tags/<id>/` – remove a tag
 
 These endpoints are exercised in the unit tests under `backend/core/tests` to ensure they function correctly. When you invoke these endpoints, the associated records are permanently removed from the database.
-

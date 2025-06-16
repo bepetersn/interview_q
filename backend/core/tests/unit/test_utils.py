@@ -1,5 +1,6 @@
 # flake8: noqa
 import json
+
 import pytest
 
 

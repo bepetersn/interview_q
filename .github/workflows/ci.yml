@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # TODO: needed?
+      # - name: Install additional system dependencies
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y libpq-dev libffi-dev libssl-dev build-essential
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt -r requirements.dev.txt
+
+      - name: Set up environment variables
+        run: |
+          echo DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))') >> $GITHUB_ENV
+          echo DJANGO_DEBUG=True >> $GITHUB_ENV
+          echo DJANGO_ALLOWED_HOSTS=* >> $GITHUB_ENV
+
+      - name: Create database & apply migrations
+        run: |
+          pwd
+          ls -la .
+          mkdir -p backend/db/
+          python manage.py migrate
+          ls -la backend/db/db.sqlite3
+
+      # TODO: Add a step to collect static files if needed
+
+      - name: Start backend server for integration tests
+        run: ./runssl.sh &
+
+      - name: Run backend tests
+        run: pytest
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npm test

@@ -63,6 +63,7 @@ This document summarizes the design, structure, and key considerations for the I
 
 - Start the frontend with `npm run dev` in the `frontend/` directory.
 - Linting and formatting are configured via ESLint and Prettier.
+- Run unit tests with `npm test` in the `frontend/` directory. This uses Jest and React Testing Library.
 - See `frontend/README.md` for more details on local setup.
 
 ---

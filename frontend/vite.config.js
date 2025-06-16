@@ -17,4 +17,12 @@ export default defineConfig({
     host: '127.0.0.1',
     port: 5173,
   },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './jest.setup.js', // If you have global setup, otherwise remove this line
+    coverage: {
+      reporter: ['text', 'json', 'html'],
+    },
+  },
 })

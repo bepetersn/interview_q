@@ -1,11 +1,13 @@
-import pytest
 import json
-from backend.core.views.question import QuestionViewSet
+
+import pytest
+
 from backend.core.tests.unit.mocks import (
     _mock_question,
     _mock_request,
     _mock_view_response,
 )
+from backend.core.views.question import QuestionViewSet
 
 
 def _create_question(client, title="Original Question"):

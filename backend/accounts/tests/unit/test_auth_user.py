@@ -1,6 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
-from django.urls import reverse, NoReverseMatch
+from django.urls import NoReverseMatch, reverse
 
 # flake8: noqa
 

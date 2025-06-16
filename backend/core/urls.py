@@ -1,12 +1,12 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
+
+from .views.question import QuestionViewSet
 from .views.question_log import (
     QuestionLogListCreateView,
     QuestionLogRetrieveUpdateDestroyView,
 )
-from .views.question import QuestionViewSet
 from .views.tag import TagListCreateView, TagRetrieveUpdateDestroyView
-
 
 router = DefaultRouter()
 router.register(r"questions", QuestionViewSet, basename="question")

@@ -1,6 +1,7 @@
-import pytest
 import json
 import os
+
+import pytest
 
 API_URL = os.getenv("API_URL", "/api")  # Use relative path for Django test client
 

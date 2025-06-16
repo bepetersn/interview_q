@@ -1,8 +1,14 @@
-import time
-import pytest
 import json
 import logging
-from backend.fixtures import BASE_URL, create_and_cleanup_user, REQUESTS_VERIFY
+import time
+
+import pytest
+
+from backend.test_common.fixtures import (
+    BASE_URL,
+    REQUESTS_VERIFY,
+    create_and_cleanup_user,
+)
 
 logger = logging.getLogger(__name__)
 
