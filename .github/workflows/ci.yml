@@ -20,13 +20,26 @@ jobs:
         run: |
           pip install -r requirements.txt -r requirements.dev
 
+      - name: Generate secret key
+        run: |
+          echo "SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" >> $GITHUB_ENV
+
+      - name: Run sqlite3 migrations
+        run: python manage.py migrate
+
+      # TODO: Add a step to collect static files if needed
+
+      - name: Start backend server
+        comment: "Start the backend server for integration tests"
+        run: ./runssl.sh &
+
       - name: Run backend tests
         run: pytest
 
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
