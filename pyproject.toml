@@ -11,6 +11,7 @@ django_find_project = false
 django_settings_module = "backend.settings"
 
 [tool.isort]
+# Make sure isort plays nice with black
 line_length = 88
 profile = "black"
 multi_line_output = 3
