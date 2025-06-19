@@ -2,6 +2,7 @@ import logging
 
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -21,11 +22,12 @@ class RegisterViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
-        except Exception:
-            logger.warning(f"Register failed: invalid data: {serializer.errors}")
-            return Response(
-                {"detail": "Invalid data", "errors": serializer.errors}, status=400
-            )
+        except ValidationError as e:
+            logger.warning(f"Register failed: invalid data: {e.detail}")
+            return Response({"detail": "Invalid data", "errors": e.detail}, status=400)
+        except Exception as e:
+            logger.error(f"Register failed: unexpected error: {str(e)}")
+            return Response({"detail": "Unexpected error"}, status=500)
         self.perform_create(serializer)
         logger.info(
             f"User {serializer.validated_data.get('username', '<unknown>')}"
@@ -43,11 +45,12 @@ class LoginViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
-        except Exception:
-            logger.warning(f"Login failed: invalid data: {serializer.errors}")
-            return Response(
-                {"detail": "Invalid data", "errors": serializer.errors}, status=400
-            )
+        except ValidationError as e:
+            logger.warning(f"Login failed: invalid data: {e.detail}")
+            return Response({"detail": "Invalid data", "errors": e.detail}, status=400)
+        except Exception as e:
+            logger.error(f"Login failed: unexpected error: {str(e)}")
+            return Response({"detail": "Unexpected error"}, status=500)
         user = serializer.validated_data.get("user")
         if not user:
             logger.warning(
