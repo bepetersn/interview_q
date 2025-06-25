@@ -4,3 +4,4 @@
 
 sudo apt-get install jq
 npm install snyk -g
+sudo apt-get install -y python3-psycopg2 libpq-dev

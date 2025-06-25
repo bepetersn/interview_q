@@ -95,11 +95,11 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("RDS_DB_NAME", "database-1"),
+        "NAME": os.environ.get("RDS_DB_NAME", "interview-q-1"),
         "USER": os.environ.get("RDS_USERNAME", "postgres"),
         "PASSWORD": os.environ.get("RDS_PASSWORD", ""),
         # This hostname is configured in AWS Route53
-        "HOST": os.environ.get("RDS_HOSTNAME", "current.db.interview-q.com"),
+        "HOST": os.environ.get("RDS_HOSTNAME", "localhost"),
         "PORT": os.environ.get("RDS_PORT", "5432"),
     }
 }
@@ -180,7 +180,7 @@ LOGGING = {
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = False
 
-TRUSTED_ORIGINS = os.environ.get("TRUSTED_ORIGINS", "").split(",")
+TRUSTED_ORIGINS = os.environ.get("TRUSTED_ORIGINS", "http://127.0.0.1:8000").split(",")
 CORS_ALLOWED_ORIGINS = TRUSTED_ORIGINS
 CSRF_TRUSTED_ORIGINS = TRUSTED_ORIGINS
 
