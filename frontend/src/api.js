@@ -14,7 +14,7 @@ const api = axios.create({
 
 // Add CSRF token to unsafe requests
 api.interceptors.request.use((config) => {
-    const method = config.method && config.method.toUpperCase();
+    const method = config.method?.toUpperCase();
     if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
         const csrftoken = getCookie('csrftoken');
         if (csrftoken) {

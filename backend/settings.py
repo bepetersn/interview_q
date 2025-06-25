@@ -94,8 +94,13 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db/db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("RDS_DB_NAME", "database-1"),
+        "USER": os.environ.get("RDS_USERNAME", "postgres"),
+        "PASSWORD": os.environ.get("RDS_PASSWORD", ""),
+        # This hostname is configured in AWS Route53
+        "HOST": os.environ.get("RDS_HOSTNAME", "current.db.interview-q.com"),
+        "PORT": os.environ.get("RDS_PORT", "5432"),
     }
 }
 
