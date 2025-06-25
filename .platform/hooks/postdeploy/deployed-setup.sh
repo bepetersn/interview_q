@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-sudo apt-get update -y
-sudo apt-get upgrade -y
-sudo apt-get install -y python3-psycopg2 libpq-dev
+dnf install -y python3-psycopg2
+dnf install -y postgresql-devel
+dnf install -y postgresql17
