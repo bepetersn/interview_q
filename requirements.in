@@ -6,3 +6,4 @@ whitenoise
 django-cors-headers
 drf-spectacular
 pyOpenSSL
+psycopg
