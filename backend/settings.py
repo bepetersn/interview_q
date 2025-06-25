@@ -95,7 +95,7 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("RDS_DB_NAME", "interview-q-1"),
+        "NAME": os.environ.get("RDS_DB_NAME", "interview_q_1"),
         "USER": os.environ.get("RDS_USERNAME", "postgres"),
         "PASSWORD": os.environ.get("RDS_PASSWORD", ""),
         # This hostname is configured in AWS Route53
@@ -177,22 +177,25 @@ LOGGING = {
     },
 }
 
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = False
 
-TRUSTED_ORIGINS = os.environ.get("TRUSTED_ORIGINS", "http://127.0.0.1:8000").split(",")
-CORS_ALLOWED_ORIGINS = TRUSTED_ORIGINS
-CSRF_TRUSTED_ORIGINS = TRUSTED_ORIGINS
+def get_env_list(key, default=""):
+    """Get environment variable as a list, splitting on commas."""
+    value = os.environ.get(key, default)
+    return [item.strip() for item in value.split(",") if item.strip()] if value else []
 
 
-# if DEBUG:
-CORS_ALLOW_CREDENTIALS = (
-    True  # Allow cookies (sessionid, csrftoken) to be sent cross-origin
+# CORS and CSRF configuration
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = get_env_list("FRONTEND_ORIGINS")
+CSRF_TRUSTED_ORIGINS = (
+    get_env_list("BACKEND_ORIGINS") + get_env_list("FRONTEND_ORIGINS"),
 )
-CSRF_COOKIE_SAMESITE = "None"  # Allow CSRF cookie to be sent cross-site (for local dev)
-CSRF_COOKIE_SECURE = True  # Allow CSRF cookie over HTTP for local dev
-SESSION_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SECURE = True  # Must have for cross-origin cookies
+
+# Cookie settings - always secure (using HTTPS locally with mkcert)
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "None" if DEBUG else "Lax"
+SESSION_COOKIE_SAMESITE = "None" if DEBUG else "Lax"
 
 
 # Session settings

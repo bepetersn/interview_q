@@ -13,6 +13,14 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    tag_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True,
+        required=False,
+        allow_empty=True,
+    )
+    tags = TagSerializer(many=True, read_only=True)
+
     class Meta:
         model = Question
         fields = "__all__"
@@ -21,6 +29,34 @@ class QuestionSerializer(serializers.ModelSerializer):
             "slug",
         ]  # Mark slug as read-only so it's not required in input
 
+    def validate_tag_ids(self, value):
+        """Validate that all tag_ids belong to the current user"""
+        if not value:
+            return value
+
+        request = self.context.get("request")
+        if (
+            not request
+            or not hasattr(request, "user")
+            or not request.user.is_authenticated
+        ):
+            raise serializers.ValidationError("Authentication required")
+
+        # Check that all provided tag IDs exist and belong to the user
+        user_tag_ids = set(
+            Tag.objects.filter(user=request.user).values_list("id", flat=True)
+        )
+        provided_tag_ids = set(value)
+
+        invalid_tag_ids = provided_tag_ids - user_tag_ids
+        if invalid_tag_ids:
+            raise serializers.ValidationError(
+                f"Invalid tag IDs: {list(invalid_tag_ids)}. "
+                "Tags must exist and belong to the current user."
+            )
+
+        return value
+
     def to_internal_value(self, data):
         data = data.copy()
         if "slug" in data:
@@ -28,6 +64,34 @@ class QuestionSerializer(serializers.ModelSerializer):
                 {"slug": "Supplying a slug is not allowed. It will be auto-generated."}
             )
         return super().to_internal_value(data)
+
+    def update(self, instance, validated_data):
+        # Handle tag_ids separately if provided
+        tag_ids = validated_data.pop("tag_ids", None)
+
+        # Update other fields
+        instance = super().update(instance, validated_data)
+
+        # Update tags if tag_ids were provided
+        if tag_ids is not None:
+            tags = Tag.objects.filter(id__in=tag_ids, user=instance.user)
+            instance.tags.set(tags)
+
+        return instance
+
+    def create(self, validated_data):
+        # Handle tag_ids separately during creation
+        tag_ids = validated_data.pop("tag_ids", [])
+
+        # Create the instance
+        instance = super().create(validated_data)
+
+        # Set tags if tag_ids were provided
+        if tag_ids:
+            tags = Tag.objects.filter(id__in=tag_ids, user=instance.user)
+            instance.tags.set(tags)
+
+        return instance
 
 
 class QuestionLogSerializer(serializers.ModelSerializer):

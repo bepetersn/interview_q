@@ -27,12 +27,13 @@ def _create_questionlog_and_dependencies(client):
         "title": "Original Question",
         "difficulty": "Easy",
     }
-    client.post(
+    log_resp = client.post(
         f"/api/questions/{question_id}/logs/",
         data=json.dumps(create_payload | {"question": question_id}),
         content_type="application/json",
     )
-    return question_id
+    log_id = log_resp.json()["id"]
+    return question_id, log_id
 
 
 def _create_tag(client):
@@ -122,7 +123,7 @@ def test_list_views(client, endpoint, method, expected_status):
 
 @pytest.mark.django_db
 def test_list_questionlogs_view(client):
-    question_id = _create_questionlog_and_dependencies(client)
+    question_id, _ = _create_questionlog_and_dependencies(client)
     url = f"/api/questions/{question_id}/logs/"
     response = client.get(url)
     assert response.status_code == 200
@@ -145,7 +146,7 @@ def test_list_questionlogs_view(client):
             },
             200,
             None,
-            1,
+            None,
         ),
     ],
     ids=[
@@ -156,7 +157,7 @@ def test_update_questionlog_views(
     client, endpoint, payload, expected_status, question_id, log_id
 ):
     if question_id is None:
-        question_id = _create_questionlog_and_dependencies(client)
+        question_id, log_id = _create_questionlog_and_dependencies(client)
     url = f"/api/questions/{question_id}/{endpoint}/{log_id}/"
     response = client.put(
         url,
@@ -170,7 +171,7 @@ def test_update_questionlog_views(
 @pytest.mark.parametrize(
     "endpoint, expected_status, question_id, log_id",
     [
-        ("logs", 204, None, 1),
+        ("logs", 204, None, None),
     ],
     ids=[
         "delete questionlog succeeds",
@@ -180,7 +181,7 @@ def test_delete_questionlog_views(
     client, endpoint, expected_status, question_id, log_id
 ):
     if question_id is None:
-        question_id = _create_questionlog_and_dependencies(client)
+        question_id, log_id = _create_questionlog_and_dependencies(client)
     url = f"/api/questions/{question_id}/{endpoint}/{log_id}/"
     response = client.delete(url)
     assert response.status_code == expected_status
