@@ -7,3 +7,4 @@ django-cors-headers
 drf-spectacular
 pyOpenSSL
 psycopg
+psycopg2-binary
