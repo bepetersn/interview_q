@@ -166,7 +166,14 @@ function QuestionList() {
       {error && (
         <Typography color="error" sx={{ mb: 2, ml: 1 }}>{error}</Typography>
       )}
-      <Box sx={{ width: '50vw', maxWidth: '50vw', ml: 1, boxSizing: 'border-box' }}>
+      <Box
+        sx={{
+          width: { xs: '100%', sm: '50vw' },
+          maxWidth: { xs: '100%', sm: '50vw' },
+          ml: 1,
+          boxSizing: 'border-box',
+        }}
+      >
         {renderQuestionsList()}
       </Box>
       {/* Question CRUD Dialog */}
