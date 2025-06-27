@@ -37,24 +37,29 @@ function QuestionLogList() {
     self_notes: '',
   });
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   const fetchLogs = async () => {
     setLoading(true);
+    setError('');
     try {
       const res = await api.get(`questions/${questionId}/logs/`);
       setLogs(res.data);
     } catch (e) {
       setLogs([]);
+      setError(e?.response?.data?.detail || e.message || 'Error fetching logs.');
     }
     setLoading(false);
   };
 
   const fetchQuestions = async () => {
+    setError('');
     try {
       const res = await api.get('questions/');
       setQuestions(res.data);
     } catch (e) {
       setQuestions([]);
+      setError(e?.response?.data?.detail || e.message || 'Error fetching questions.');
     }
   };
 
@@ -87,6 +92,7 @@ function QuestionLogList() {
 
   const handleSave = async () => {
     setSaving(true);
+    setError('');
     try {
       const payload = { ...form };
       if (editLog) {
@@ -96,14 +102,21 @@ function QuestionLogList() {
       }
       fetchLogs();
       handleClose();
-    } catch (e) {}
+    } catch (e) {
+      setError(e?.response?.data?.detail || e.message || 'Error saving log.');
+    }
     setSaving(false);
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this log?')) return;
-    await api.delete(`questions/${questionId}/logs/${id}/`);
-    fetchLogs();
+    setError('');
+    try {
+      await api.delete(`questions/${questionId}/logs/${id}/`);
+      fetchLogs();
+    } catch (e) {
+      setError(e?.response?.data?.detail || e.message || 'Error deleting log.');
+    }
   };
 
   const questionTitle = questions.find(q => String(q.id) === String(questionId))?.title;
@@ -112,6 +125,9 @@ function QuestionLogList() {
     <div>
       <Typography variant="h4" gutterBottom>Attempts / Logs {questionTitle && `for "${questionTitle}"`}</Typography>
       <Button variant="contained" startIcon={<Add />} onClick={() => handleOpen()} sx={{ mb: 2 }}>Add Log</Button>
+      {error && (
+        <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
+      )}
       {loading ? <CircularProgress /> : (
         <List>
           {logs.map((log) => (
