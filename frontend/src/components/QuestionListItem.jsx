@@ -16,7 +16,8 @@ function QuestionListItem({ question, onEdit, onDelete, onViewLogs }) {
         <ListItemText
           primary={<Box>
             <span
-              role="button"
+              role="link"
+              aria-label={`View logs for ${question.title}`}
               tabIndex={0}
               style={{ cursor: 'pointer', fontWeight: 700, outline: 'none' }}
               onClick={() => onViewLogs(question.id)}
