@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -161,3 +164,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+
+# Sentry configuration
+BACKEND_SENTRY_DSN = os.environ.get("BACKEND_SENTRY_DSN")
+if BACKEND_SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=BACKEND_SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=float(os.environ.get("SENTRY_TRACES_SAMPLE_RATE", 0.0)),
+        send_default_pii=True,
+    )

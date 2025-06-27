@@ -29,6 +29,17 @@ This project is a full-stack application for managing programming interview ques
   - Install dependencies with `npm install`.
   - Start the development server with `npm run dev`.
 
+## Monitoring with Sentry
+
+To enable Sentry monitoring, create Sentry projects for both the backend and the
+frontend and set the following environment variables:
+
+- `BACKEND_SENTRY_DSN` for the Django backend
+- `VITE_FRONTEND_SENTRY_DSN` for the React frontend
+
+With these variables set, both applications will send errors and performance
+data to Sentry.
+
 ## Documentation
 
 - Backend architecture: [`docs/backend_design.md`](docs/backend_design.md)
