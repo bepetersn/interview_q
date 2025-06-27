@@ -1,10 +1,50 @@
-faker
-flake8
-black
-pep8
-pytest-django
+# Development Dependencies
+# Include production requirements
+-r requirements.txt
+
+# Testing
+pytest==8.4.0
+pytest-django==4.11.1
 pytest-cov
-playwright
-pre-commit
+playwright==1.52.0
+Faker==37.3.0
+
+# Code Quality & Formatting
+black==25.1.0
+flake8==7.2.0
+pep8==1.7.1
+pycodestyle==2.13.0
+pyflakes==3.3.2
+mccabe==0.7.0
+pre_commit==4.2.0
+
+# Development Tools
 werkzeug
-psycopg2-binary==2.9.10
+pyngrok==7.2.11
+python-dateutil==2.9.0.post0
+
+# AWS Infrastructure (CDK)
+aws-cdk-lib==2.200.1
+aws-cdk.asset-awscli-v1==2.2.237
+aws-cdk.asset-node-proxy-agent-v6==2.1.0
+aws-cdk.cloud-assembly-schema==44.2.0
+constructs==10.4.2
+jsii==1.112.0
+publication==0.0.3
+
+# Build & Package Management (dev-only)
+click==8.2.1
+distlib==0.3.9
+filelock==3.18.0
+greenlet==3.2.2
+identify==2.6.12
+importlib_resources==6.5.2
+iniconfig==2.1.0
+MarkupSafe==3.0.2
+mypy_extensions==1.1.0
+nodeenv==1.9.1
+pathspec==0.12.1
+platformdirs==4.3.8
+pluggy==1.6.0
+pyee==13.0.0
+Pygments==2.19.1
