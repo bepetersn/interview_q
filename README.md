@@ -33,12 +33,14 @@ This project is a full-stack application for managing programming interview ques
 
 - Backend architecture: [`docs/backend_design.md`](docs/backend_design.md)
 - Import API design: [`docs/import_api_design.md`](docs/import_api_design.md)
+- Deployment instructions: [`docs/deployment.md`](docs/deployment.md)
 
 ## Contributing
 
 - Review the backend and API documentation in the `docs/` directory.
 - See the Playwright and Django tests in `apps/core/tests` for usage examples.
 - For admin or data model changes, check the `apps/core` and `apps/q_admin` directories.
+- The CI pipeline in `.github/workflows/CI.yml` runs linting, tests and Docker deployment.
 
 ---
 
