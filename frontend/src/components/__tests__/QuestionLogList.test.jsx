@@ -36,3 +36,20 @@ test('fetches and displays question logs', async () => {
   expect(await screen.findByText('Question1')).toBeInTheDocument();
   expect(await screen.findByText('Outcome: Solved')).toBeInTheDocument();
 });
+
+test('defaults date to today when opening add log dialog', async () => {
+  api.get.mockResolvedValueOnce({ data: [] });
+  api.get.mockResolvedValueOnce({ data: [{ id: 1, title: 'Question1' }] });
+
+  render(<QuestionLogList />);
+
+  // Open the add log dialog
+  screen.getByText('Add Log').click();
+
+  const dateInput = await screen.findByLabelText('Date Attempted');
+  const today = new Date();
+  const local = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
+  expect(dateInput.value).toContain(local);
+});
