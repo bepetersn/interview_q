@@ -15,3 +15,11 @@ export function getCookie(name) {
     }
     return cookieValue;
 }
+
+// Returns current date/time formatted for an HTML datetime-local input
+export function getCurrentDateTimeLocalString() {
+    const now = new Date();
+    const offsetMs = now.getTimezoneOffset() * 60000;
+    const local = new Date(now.getTime() - offsetMs);
+    return local.toISOString().slice(0, 16);
+}
