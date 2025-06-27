@@ -35,6 +35,10 @@ This document describes the backend architecture and design for the Interview Qu
 - Tests make HTTP requests with Playwright rather than Django’s test client, so they depend on an actual server. The fixtures reset the SQLite database after each test.
 - A custom management command (`create_fake_data`) can be used to seed the database.
 - Logging is configured via the `LOGGING` dictionary in `settings.py` to output to console with additional logger settings for `apps.core.views`.
+ - Optional Datadog APM instrumentation is supported. When
+   `DD_TRACE_ENABLED=true` is set and the `ddtrace` package is installed,
+   start the server with `python -m ddtrace run manage.py runserver` to
+   automatically trace Django requests.
 
 ## Pointers for New Contributors
 
