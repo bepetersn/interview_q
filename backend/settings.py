@@ -143,7 +143,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "frontend" / "dist"]
+# Fix: BASE_DIR is backend/, so we need to go up one level to reach frontend/
+STATICFILES_DIRS = [BASE_DIR.parent / "frontend" / "dist"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
@@ -187,8 +188,8 @@ def get_env_list(key, default=""):
 # CORS and CSRF configuration
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = get_env_list("FRONTEND_ORIGINS")
-CSRF_TRUSTED_ORIGINS = (
-    get_env_list("BACKEND_ORIGINS") + get_env_list("FRONTEND_ORIGINS"),
+CSRF_TRUSTED_ORIGINS = get_env_list("BACKEND_ORIGINS") + get_env_list(
+    "FRONTEND_ORIGINS"
 )
 
 # Cookie settings - always secure (using HTTPS locally with mkcert)
