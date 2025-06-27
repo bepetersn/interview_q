@@ -12,6 +12,7 @@ vi.mock('react-router-dom', async () => {
   return {
     ...actual,
     useParams: () => ({ questionId: '1' }),
+    useNavigate: () => vi.fn(),
   };
 });
 
