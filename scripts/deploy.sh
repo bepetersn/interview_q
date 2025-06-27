@@ -2,10 +2,9 @@
 
 # Automated deployment script for interview-q
 # This script deploys code and optionally runs setup tasks
+# Usage: ./scripts/deploy.sh [--force]
 
 set -e  # Exit on any error
-
-echo "🚀 Starting deployment for interview-q..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -39,16 +38,29 @@ if ! command -v eb &> /dev/null; then
     exit 1
 fi
 
+# Check for --force flag
+FORCE_DEPLOY=false
+if [ "$1" = "--force" ]; then
+    FORCE_DEPLOY=true
+    echo "🚀 Starting FORCED deployment for interview-q..."
+    echo "⚠️  WARNING: Bypassing environment state checks"
+else
+    echo "🚀 Starting deployment for interview-q..."
+fi
+
 # Check environment state before deploying
 print_status "Checking environment state..."
 ENV_STATUS=$(eb status | grep "Status:" | awk '{print $2}')
 print_status "Current environment status: $ENV_STATUS"
 
-if [ "$ENV_STATUS" != "Ready" ]; then
+if [ "$FORCE_DEPLOY" = true ]; then
+    print_warning "Forcing deployment despite environment state: $ENV_STATUS"
+elif [ "$ENV_STATUS" != "Ready" ]; then
     print_error "Environment is not in Ready state (current: $ENV_STATUS)"
     print_error "Please wait for the environment to be Ready before deploying"
     print_warning "You can check status with: eb status"
     print_warning "Or monitor with: eb events --follow"
+    print_warning "To deploy anyway, use: ./scripts/deploy.sh --force"
     exit 1
 fi
 
