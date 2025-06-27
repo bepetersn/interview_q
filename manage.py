@@ -3,6 +3,13 @@
 import os
 import sys
 
+# Enable Datadog APM when requested
+if os.getenv("DD_TRACE_ENABLED") == "true":
+    try:
+        import ddtrace.auto  # noqa: F401
+    except Exception:
+        pass
+
 
 def main():
     """Run administrative tasks."""

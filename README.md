@@ -24,6 +24,9 @@ This project is a full-stack application for managing programming interview ques
   - Install dependencies from `requirements.txt`.
   - Run migrations and seed data with `python manage.py create_fake_data`.
   - Start the server with `python manage.py runserver`.
+  - To run with Datadog APM, set the variables in `.env.example` and set
+    `DD_TRACE_ENABLED=true`. Start the server using
+    `python -m ddtrace run manage.py runserver`.
 
 - **Frontend:**
   - Navigate to the `frontend/` directory.
