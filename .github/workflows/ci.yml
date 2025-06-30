@@ -26,7 +26,10 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install -r requirements.txt
+          # Reasons we need requirements-dev.txt:
+          # - Need to get werkzeug for runssl.sh
+          # - Need to get pytest
+          pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Set up environment variables
         run: |
