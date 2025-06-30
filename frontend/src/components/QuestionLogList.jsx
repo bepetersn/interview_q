@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import { Delete, Edit, Add } from '@mui/icons-material';
 import api from '../api';
+import { getCurrentDateTimeLocalString } from '../utils';
 
 function QuestionLogList() {
   const { questionId } = useParams();
@@ -30,7 +31,7 @@ function QuestionLogList() {
   const [editLog, setEditLog] = useState(null);
   const [form, setForm] = useState({
     question: questionId || '',
-    date_attempted: '',
+    date_attempted: getCurrentDateTimeLocalString(),
     time_spent_min: '',
     outcome: '',
     solution_approach: '',
@@ -70,19 +71,35 @@ function QuestionLogList() {
 
   const handleOpen = (log = null) => {
     setEditLog(log);
-    setForm(log ? {
-      ...log,
-      question: log.question.id,
-    } : {
-      question: questionId || '', date_attempted: '', time_spent_min: '', outcome: '', solution_approach: '', self_notes: '',
-    });
+    setForm(
+      log
+        ? {
+            ...log,
+            question: log.question.id,
+          }
+        : {
+            question: questionId || '',
+            date_attempted: getCurrentDateTimeLocalString(),
+            time_spent_min: '',
+            outcome: '',
+            solution_approach: '',
+            self_notes: '',
+          },
+    );
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
     setEditLog(null);
-    setForm({ question: questionId || '', date_attempted: '', time_spent_min: '', outcome: '', solution_approach: '', self_notes: '' });
+    setForm({
+      question: questionId || '',
+      date_attempted: getCurrentDateTimeLocalString(),
+      time_spent_min: '',
+      outcome: '',
+      solution_approach: '',
+      self_notes: '',
+    });
   };
 
   const handleChange = (e) => {
