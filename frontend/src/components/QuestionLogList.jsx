@@ -17,16 +17,19 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Chip,
+  Box,
 } from '@mui/material';
 import { Delete, Edit, Add, ArrowBack } from '@mui/icons-material';
 import api from '../api';
 import { getCurrentDateTimeLocalString } from '../utils';
 
-function QuestionLogList() {
-  const { questionId } = useParams();
+function QuestionLogList({ questionId: propQuestionId, embedded = false, question: questionProp, onClose }) {
+  const { questionId: paramQuestionId } = useParams();
+  const questionId = propQuestionId || paramQuestionId;
   const navigate = useNavigate();
   const [logs, setLogs] = useState([]);
-  const [questions, setQuestions] = useState([]);
+  const [question, setQuestion] = useState(questionProp || null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [editLog, setEditLog] = useState(null);
@@ -54,20 +57,21 @@ function QuestionLogList() {
     setLoading(false);
   };
 
-  const fetchQuestions = async () => {
+  const fetchQuestion = async () => {
+    if (questionProp) return;
     setError('');
     try {
-      const res = await api.get('questions/');
-      setQuestions(res.data);
+      const res = await api.get(`questions/${questionId}/`);
+      setQuestion(res.data);
     } catch (e) {
-      setQuestions([]);
-      setError(e?.response?.data?.detail || e.message || 'Error fetching questions.');
+      setQuestion(null);
+      setError(e?.response?.data?.detail || e.message || 'Error fetching question.');
     }
   };
 
   useEffect(() => {
     fetchLogs();
-    fetchQuestions();
+    fetchQuestion();
   }, [questionId]);
 
   const handleOpen = (log = null) => {
@@ -138,13 +142,24 @@ function QuestionLogList() {
     }
   };
 
-  const questionTitle = questions.find(q => String(q.id) === String(questionId))?.title;
+  const questionTitle = question?.title;
 
   return (
     <div>
       <Button startIcon={<ArrowBack />} onClick={() => navigate('/')} sx={{ mb: 2 }}>Back to Questions</Button>
       <Typography variant="h4" gutterBottom>Attempts / Logs {questionTitle && `for "${questionTitle}"`}</Typography>
       <Button variant="contained" startIcon={<Add />} onClick={() => handleOpen()} sx={{ mb: 2 }}>Add Log</Button>
+      {question && (
+        <Box sx={{ textAlign: 'left', mb: 2 }}>
+          <Typography variant="h6">{question.title}</Typography>
+          {question.difficulty && <Chip label={question.difficulty} size="small" sx={{ ml: 1 }} />}
+          {question.notes && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              {question.notes}
+            </Typography>
+          )}
+        </Box>
+      )}
       {error && (
         <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
       )}
@@ -174,14 +189,16 @@ function QuestionLogList() {
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>{editLog ? 'Edit Log' : 'Add Log'}</DialogTitle>
         <DialogContent>
-          <FormControl fullWidth margin="dense">
-            <InputLabel>Question</InputLabel>
-            <Select name="question" value={form.question} label="Question" onChange={handleChange} disabled={!!questionId}>
-              {questions.map((q) => (
-                <MenuItem key={q.id} value={q.id}>{q.title}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          {questionId ? (
+            <Typography sx={{ mt: 1, mb: 1 }}><b>Question:</b> {questionTitle}</Typography>
+          ) : (
+            <FormControl fullWidth margin="dense">
+              <InputLabel>Question</InputLabel>
+              <Select name="question" value={form.question} label="Question" onChange={handleChange}>
+                {question && <MenuItem value={question.id}>{question.title}</MenuItem>}
+              </Select>
+            </FormControl>
+          )}
           <TextField margin="dense" label="Date Attempted" name="date_attempted" type="datetime-local" value={form.date_attempted} onChange={handleChange} fullWidth InputLabelProps={{ shrink: true }} />
           <TextField margin="dense" label="Time Spent (min)" name="time_spent_min" type="number" value={form.time_spent_min} onChange={handleChange} fullWidth />
           <FormControl fullWidth margin="dense">
