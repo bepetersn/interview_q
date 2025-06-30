@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Typography,
   Button,
@@ -18,12 +18,13 @@ import {
   InputLabel,
   FormControl,
 } from '@mui/material';
-import { Delete, Edit, Add } from '@mui/icons-material';
+import { Delete, Edit, Add, ArrowBack } from '@mui/icons-material';
 import api from '../api';
 import { getCurrentDateTimeLocalString } from '../utils';
 
 function QuestionLogList() {
   const { questionId } = useParams();
+  const navigate = useNavigate();
   const [logs, setLogs] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -127,6 +128,7 @@ function QuestionLogList() {
 
   return (
     <div>
+      <Button startIcon={<ArrowBack />} onClick={() => navigate('/')} sx={{ mb: 2 }}>Back to Questions</Button>
       <Typography variant="h4" gutterBottom>Attempts / Logs {questionTitle && `for "${questionTitle}"`}</Typography>
       <Button variant="contained" startIcon={<Add />} onClick={() => handleOpen()} sx={{ mb: 2 }}>Add Log</Button>
       {loading ? <CircularProgress /> : (
