@@ -92,17 +92,26 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("RDS_DB_NAME", "interview_q_1"),
-        "USER": os.environ.get("RDS_USERNAME", "postgres"),
-        "PASSWORD": os.environ.get("RDS_PASSWORD", ""),
-        # This hostname is configured in AWS Route53
-        "HOST": os.environ.get("RDS_HOSTNAME", "localhost"),
-        "PORT": os.environ.get("RDS_PORT", "5432"),
+# Allow using SQLite for local / CI, PostgreSQL for production
+if DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db" / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("RDS_DB_NAME", "interview_q_1"),
+            "USER": os.environ.get("RDS_USERNAME", "postgres"),
+            "PASSWORD": os.environ.get("RDS_PASSWORD", ""),
+            # This hostname is configured in AWS Route53
+            "HOST": os.environ.get("RDS_HOSTNAME", "localhost"),
+            "PORT": os.environ.get("RDS_PORT", "5432"),
+        }
+    }
 
 
 # Password validation
