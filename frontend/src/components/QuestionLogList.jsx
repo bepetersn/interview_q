@@ -122,6 +122,7 @@ function QuestionLogList() {
       handleClose();
     } catch (e) {
       setError(e?.response?.data?.detail || e.message || 'Error saving log.');
+      console.error('Error saving log:', e);
     }
     setSaving(false);
   };
