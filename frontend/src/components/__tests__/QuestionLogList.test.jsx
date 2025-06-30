@@ -38,6 +38,17 @@ test('fetches and displays question logs', async () => {
   expect(await screen.findByText('Outcome: Solved')).toBeInTheDocument();
 });
 
+
+test('shows an error message when fetching logs fails', async () => {
+  api.get.mockRejectedValueOnce(new Error('Network Error'));
+  api.get.mockResolvedValueOnce({ data: [] });
+
+  render(<QuestionLogList />);
+
+  expect(api.get).toHaveBeenNthCalledWith(1, 'questions/1/logs/');
+  expect(await screen.findByText('Network Error')).toBeInTheDocument();
+});
+  
 test('defaults date to today when opening add log dialog', async () => {
   api.get.mockResolvedValueOnce({ data: [] });
   api.get.mockResolvedValueOnce({ data: [{ id: 1, title: 'Question1' }] });
