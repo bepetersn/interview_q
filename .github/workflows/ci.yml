@@ -32,7 +32,11 @@ jobs:
         run: |
           echo DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))') >> $GITHUB_ENV
           echo DJANGO_DEBUG=True >> $GITHUB_ENV
-          echo DJANGO_ALLOWED_HOSTS=* >> $GITHUB_ENV
+          echo RDS_PASSWORD=topbottom1 >> $GITHUB_ENV
+          echo RDS_HOSTNAME=localhost >> $GITHUB_ENV
+          echo RDS_DB_NAME=interview_q_1 >> $GITHUB_ENV
+          echo FRONTEND_ORIGINS=http://127.0.0.1:5173,https://127.0.0.1:5173 >> $GITHUB_ENV
+          echo BACKEND_ORIGINS=http://127.0.0.1:8000,https://127.0.0.1:8000 >> $GITHUB_ENV
 
       - name: Create database & apply migrations
         run: |
