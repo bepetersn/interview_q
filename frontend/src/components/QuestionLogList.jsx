@@ -174,13 +174,15 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
             }>
               <ListItemText
                 primary={<b>{log.question.title}</b>}
-                secondary={<>
-                  <div>Date: {log.date_attempted}</div>
-                  <div>Outcome: {log.outcome}</div>
-                  <div>Time Spent: {log.time_spent_min} min</div>
-                  <div>Approach: {log.solution_approach}</div>
-                  <div>Notes: {log.self_notes}</div>
-                </>}
+                secondary={
+                  <>
+                    <span style={{ display: 'block' }}>Date: {log.date_attempted}</span>
+                    <span style={{ display: 'block' }}>Outcome: {log.outcome}</span>
+                    <span style={{ display: 'block' }}>Time Spent: {log.time_spent_min} min</span>
+                    <span style={{ display: 'block' }}>Approach: {log.solution_approach}</span>
+                    <span style={{ display: 'block' }}>Notes: {log.self_notes}</span>
+                  </>
+                }
               />
             </ListItem>
           ))}

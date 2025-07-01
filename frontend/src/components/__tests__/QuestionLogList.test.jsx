@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, screen } from '@testing-library/react';
 import QuestionLogList from '../QuestionLogList.jsx';
 import api from '../../api';
@@ -28,35 +28,45 @@ const mockLog = {
 
 test('fetches and displays question logs', async () => {
   api.get.mockResolvedValueOnce({ data: [mockLog] });
-  api.get.mockResolvedValueOnce({ data: [{ id: 1, title: 'Question1' }] });
+  api.get.mockResolvedValueOnce({ data: { id: 1, title: 'Question1' } });
 
-  render(<QuestionLogList />);
+  await act(async () => {
+    render(<QuestionLogList />);
+  });
 
   expect(api.get).toHaveBeenNthCalledWith(1, 'questions/1/logs/');
-  expect(api.get).toHaveBeenNthCalledWith(2, 'questions/');
-  expect(await screen.findByText('Question1')).toBeInTheDocument();
+  expect(api.get).toHaveBeenNthCalledWith(2, 'questions/1/');
+
+  // Look for the specific text that appears in the list item
+  expect(await screen.findByText(/Attempts \/ Logs.*for "Question1"/)).toBeInTheDocument();
   expect(await screen.findByText('Outcome: Solved')).toBeInTheDocument();
 });
 
 
 test('shows an error message when fetching logs fails', async () => {
   api.get.mockRejectedValueOnce(new Error('Network Error'));
-  api.get.mockResolvedValueOnce({ data: [] });
+  api.get.mockResolvedValueOnce({ data: { id: 1, title: 'Question1' } });
 
-  render(<QuestionLogList />);
+  await act(async () => {
+    render(<QuestionLogList />);
+  });
 
   expect(api.get).toHaveBeenNthCalledWith(1, 'questions/1/logs/');
   expect(await screen.findByText('Network Error')).toBeInTheDocument();
 });
-  
+
 test('defaults date to today when opening add log dialog', async () => {
   api.get.mockResolvedValueOnce({ data: [] });
-  api.get.mockResolvedValueOnce({ data: [{ id: 1, title: 'Question1' }] });
+  api.get.mockResolvedValueOnce({ data: { id: 1, title: 'Question1' } });
 
-  render(<QuestionLogList />);
+  await act(async () => {
+    render(<QuestionLogList />);
+  });
 
   // Open the add log dialog
-  screen.getByText('Add Log').click();
+  await act(async () => {
+    screen.getByText('Add Log').click();
+  });
 
   const dateInput = await screen.findByLabelText('Date Attempted');
   const today = new Date();
