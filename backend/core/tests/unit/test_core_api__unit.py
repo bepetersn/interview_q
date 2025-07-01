@@ -95,7 +95,9 @@ def test_create_questionlog_views(client, payload, expected_status):
     url = f"/api/questions/{question_id}/logs/"
     response = client.post(
         url,
-        data=json.dumps(payload | {"question": question_id}),
+        data=json.dumps(
+            payload | {"question": question_id, "content": "Updated log content."}
+        ),
         content_type="application/json",
     )
     assert response.status_code == expected_status

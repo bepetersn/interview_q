@@ -23,11 +23,26 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = "__all__"
+        fields = [
+            "id",
+            "title",
+            "source",
+            "content",
+            "difficulty",
+            "is_active",
+            "created_at",
+            "updated_at",
+            "slug",
+            "tag_ids",
+            "tags",
+        ]
         read_only_fields = [
+            "id",
             "user",
             "slug",
-        ]  # Mark slug as read-only so it's not required in input
+            "created_at",
+            "updated_at",
+        ]
 
     def validate_tag_ids(self, value):
         """Validate that all tag_ids belong to the current user"""

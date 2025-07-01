@@ -48,7 +48,7 @@ class Question(models.Model):
         blank=True,
         help_text="e.g., LeetCode, personal interview",
     )
-    notes = models.TextField(
+    content = models.TextField(
         blank=True, help_text="Detailed description of the question"
     )
     slug = models.SlugField(

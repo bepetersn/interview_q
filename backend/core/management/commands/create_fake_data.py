@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 title=fake.sentence(),
                 source=fake.company(),
                 difficulty=random.choice(["Easy", "Medium", "Hard"]),
-                description=fake.text(),
+                content=fake.text(),
                 slug=f"{fake.word()}-{fake.uuid4()}",
                 is_active=random.choice([True, False]),
                 attempts_count=random.randint(1, 5),
