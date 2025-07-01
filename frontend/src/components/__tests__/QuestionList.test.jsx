@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import QuestionList from '../QuestionList.jsx';
+import QuestionList from '../pages/QuestionList.jsx';
 import api from '../../api';
 
 import { vi } from 'vitest';

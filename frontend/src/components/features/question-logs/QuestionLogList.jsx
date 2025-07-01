@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Typography,
@@ -21,8 +22,8 @@ import {
   Box,
 } from '@mui/material';
 import { Delete, Edit, Add, ArrowBack } from '@mui/icons-material';
-import api from '../api';
-import { getCurrentDateTimeLocalString } from '../utils';
+import api from '../../../api';
+import { getCurrentDateTimeLocalString } from '../../../utils';
 
 function QuestionLogList({ questionId: propQuestionId, embedded = false, question: questionProp, onClose }) {
   const { questionId: paramQuestionId } = useParams();
@@ -146,18 +147,19 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
 
   return (
     <div>
-      <Button startIcon={<ArrowBack />} onClick={() => navigate('/')} sx={{ mb: 2 }}>Back to Questions</Button>
+      <Button
+        startIcon={<ArrowBack />}
+        onClick={() => embedded ? onClose() : navigate('/')}
+        sx={{ mb: 2 }}
+      >
+        {embedded ? 'Back' : 'Back to Questions'}
+      </Button>
       <Typography variant="h4" gutterBottom>Attempts / Logs {questionTitle && `for "${questionTitle}"`}</Typography>
       <Button variant="contained" startIcon={<Add />} onClick={() => handleOpen()} sx={{ mb: 2 }}>Add Log</Button>
       {question && (
         <Box sx={{ textAlign: 'left', mb: 2 }}>
           <Typography variant="h6">{question.title}</Typography>
           {question.difficulty && <Chip label={question.difficulty} size="small" sx={{ ml: 1 }} />}
-          {question.notes && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {question.notes}
-            </Typography>
-          )}
         </Box>
       )}
       {error && (
@@ -223,5 +225,12 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
     </div>
   );
 }
+
+QuestionLogList.propTypes = {
+  questionId: PropTypes.string,
+  embedded: PropTypes.bool,
+  question: PropTypes.object,
+  onClose: PropTypes.func,
+};
 
 export default QuestionLogList;

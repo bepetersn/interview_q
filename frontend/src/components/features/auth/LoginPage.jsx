@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../App.css";
-import api from "../api";
+import "../../../App.css";
+import api from "../../../api";
 
 const LoginPage = (props) => {
     const { onLogin } = props || {};
@@ -18,7 +18,6 @@ const LoginPage = (props) => {
                 "accounts/login/",
                 { username, password }
             );
-            // localStorage.setItem("user", JSON.stringify(response.data));
             onLogin(response.data);
         } catch (err) {
             setError(

@@ -2,12 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/material';
 import QuestionList from './QuestionList.jsx';
-import QuestionLogList from './QuestionLogList.jsx';
-import LoginPage from './LoginPage.jsx';
-import RegisterPage from './RegisterPage.jsx';
-import api from '../api.js';
-import '../App.css';
-import '../login.css';
+import { QuestionLogList } from '../features/question-logs/index.js';
+import { LoginPage, RegisterPage } from '../features/auth/index.js';
+import api from '../../api.js';
+import '../../App.css';
+import '../../login.css';
 
 
 function App() {

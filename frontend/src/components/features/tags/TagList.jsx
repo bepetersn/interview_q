@@ -16,7 +16,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { Delete, Edit, Add } from '@mui/icons-material';
-import api from '../api';
+import api from '../../../api';
 
 function TagList() {
   const [tags, setTags] = useState([]);

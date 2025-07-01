@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import TagList from '../TagList.jsx';
+import TagList from '../features/tags/TagList.jsx';
 import api from '../../api';
 
 import { vi } from 'vitest';

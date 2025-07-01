@@ -1,6 +1,6 @@
 import React, { act } from 'react';
 import { render, screen } from '@testing-library/react';
-import QuestionLogList from '../QuestionLogList.jsx';
+import QuestionLogList from '../features/question-logs/QuestionLogList.jsx';
 import api from '../../api';
 
 import { vi } from 'vitest';
