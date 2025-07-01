@@ -18,10 +18,11 @@ import {
   ListItemText
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+
 import api from '../api';
 import TagList from './TagList.jsx';
 import QuestionListItem from './QuestionListItem.jsx';
+import QuestionLogsDrawer from './QuestionLogsDrawer.jsx';
 
 function QuestionList() {
   const [questions, setQuestions] = useState([]);
@@ -40,7 +41,8 @@ function QuestionList() {
   const [saving, setSaving] = useState(false);
   const [tagDialogOpen, setTagDialogOpen] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [logsOpen, setLogsOpen] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
 
   const fetchQuestions = async () => {
     setLoading(true);
@@ -147,7 +149,11 @@ function QuestionList() {
             question={q}
             onEdit={handleOpen}
             onDelete={handleDelete}
-            onViewLogs={(id) => navigate(`/logs/${id}`)}
+            onViewLogs={(id) => {
+              const q = questions.find(qq => qq.id === id);
+              setSelectedQuestion(q);
+              setLogsOpen(true);
+            }}
           />
         ))}
       </List>
@@ -233,6 +239,11 @@ function QuestionList() {
     }}>Close</Button>
         </DialogActions>
       </Dialog>
+      <QuestionLogsDrawer
+        open={logsOpen}
+        onClose={() => { setLogsOpen(false); setSelectedQuestion(null); }}
+        question={selectedQuestion}
+      />
     </div>
   );
 }
