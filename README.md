@@ -52,7 +52,6 @@ Coverage settings are defined in `.coveragerc`.
 
 - Review the backend and API documentation in the `docs/` directory.
 - See the tests in `apps/core/tests` for usage examples.
-- For admin or data model changes, check the `apps/core` and `apps/q_admin` directories.
 
 ---
 

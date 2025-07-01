@@ -9,8 +9,7 @@ from .utils import sanitize_html
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ["id", "name", "user"]
-        read_only_fields = ["user"]
+        fields = ["id", "name"]
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -21,11 +20,22 @@ class QuestionSerializer(serializers.ModelSerializer):
         allow_empty=True,
     )
     tags = TagSerializer(many=True, read_only=True)
-    title = serializers.CharField(required=True)
 
     class Meta:
         model = Question
-        fields = ["id", "content", "tag_ids", "slug", "tags", "title"]
+        fields = [
+            "id",
+            "content",
+            "difficulty",
+            "source",
+            "is_active",
+            "tag_ids",
+            "slug",
+            "tags",
+            "title",
+            "created_at",
+            "updated_at",
+        ]
         read_only_fields = [
             "id",
             "user",
@@ -77,9 +87,6 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     def validate_title(self, value):
         """Ensure that the title is always present and not empty"""
-        request = self.context.get("request")
-        if request and request.method == "PATCH":
-            return value  # Allow partial updates without title validation
         if not value or not value.strip():
             raise serializers.ValidationError("Title is required and cannot be empty.")
         return value
@@ -129,7 +136,6 @@ class QuestionLogSerializer(serializers.ModelSerializer):
         model = QuestionLog
         fields = [
             "id",
-            "user",
             "question",
             "title",
             "date_attempted",
@@ -138,7 +144,6 @@ class QuestionLogSerializer(serializers.ModelSerializer):
             "solution_approach",
             "self_notes",
         ]
-        read_only_fields = ["user"]
 
 
 class RegisterSerializer(serializers.ModelSerializer):

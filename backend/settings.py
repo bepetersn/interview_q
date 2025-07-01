@@ -46,12 +46,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "backend.core.apps.CoreConfig",
-    # If you have a QAdminConfig, use 'backend.q_admin.apps.QAdminConfig'
-    "backend.q_admin",
-    # Added new accounts app
     "backend.accounts",
     "drf_spectacular",
-    "corsheaders",  # Added for CORS
+    "corsheaders",
     "django_extensions",  # For runserver_plus HTTPS support
 ]
 
@@ -230,16 +227,6 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.FormParser",
         "rest_framework.parsers.MultiPartParser",
     ],
-}
-
-SPECTACULAR_SETTINGS = {
-    "TITLE": "Interview Questions API",
-    "DESCRIPTION": "API documentation for the Interview Questions app",
-    "VERSION": "1.0.0",
-}
-
-REST_FRAMEWORK = {
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SPECTACULAR_SETTINGS = {

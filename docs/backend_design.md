@@ -30,8 +30,6 @@ This document describes the backend architecture and design for the Interview Qu
     - Handles session-based authentication
     - URLs are mounted under `/api/accounts/`
 
-  - `backend/q_admin`: Django admin customizations with basic admin registration for the Tag model
-
 - **Additional directories**
   - `backend/test_common/`: shared test fixtures and utilities
   - `backend/db/`: database-related files and migrations
