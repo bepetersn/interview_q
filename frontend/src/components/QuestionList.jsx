@@ -33,7 +33,7 @@ function QuestionList() {
   const [form, setForm] = useState({
     title: '',
     source: '',
-    notes: '',
+    content: '',
     difficulty: '',
     tag_ids: [],
     is_active: true,
@@ -43,6 +43,15 @@ function QuestionList() {
   const [error, setError] = useState("");
   const [logsOpen, setLogsOpen] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
+
+  const emptyForm = {
+    title: '',
+    source: '',
+    content: '',
+    difficulty: '',
+    tag_ids: [],
+    is_active: true,
+  };
 
   const fetchQuestions = async () => {
     setLoading(true);
@@ -77,16 +86,14 @@ function QuestionList() {
     setForm(question ? {
       ...rest,
       tag_ids: question.tags ? question.tags.map(t => t.id) : [],
-    } : {
-      title: '', source: '', notes: '', difficulty: '', tag_ids: [], is_active: true,
-    });
+    } : emptyForm);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
     setEditQuestion(null);
-    setForm({ title: '', source: '', notes: '', difficulty: '', tag_ids: [], is_active: true });
+    setForm(emptyForm);
   };
 
   const handleChange = (e) => {
@@ -188,7 +195,7 @@ function QuestionList() {
         <DialogContent>
           <TextField margin="dense" label="Title" name="title" value={form.title} onChange={handleChange} fullWidth />
           <TextField margin="dense" label="Source" name="source" value={form.source} onChange={handleChange} fullWidth />
-          <TextField margin="dense" label="Notes" name="notes" value={form.notes} onChange={handleChange} fullWidth multiline rows={2} />
+          <TextField margin="dense" label="Content" name="content" value={form.content} onChange={handleChange} fullWidth multiline rows={2} />
           <FormControl fullWidth margin="dense">
             <InputLabel>Difficulty</InputLabel>
             <Select name="difficulty" value={form.difficulty} label="Difficulty" onChange={handleChange}>

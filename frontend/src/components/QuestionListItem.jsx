@@ -28,7 +28,7 @@ function QuestionListItem({ question, onEdit, onDelete, onViewLogs }) {
           </Box>}
           secondary={
             <>
-              <span>{question.notes}</span><br/>
+              <span>{question.content}</span><br/>
               <span>
                 Tags:&nbsp;
                 {question.tags && question.tags.map(t => (
@@ -49,7 +49,7 @@ QuestionListItem.propTypes = {
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     title: PropTypes.string.isRequired,
     difficulty: PropTypes.string,
-    notes: PropTypes.string,
+    content: PropTypes.string,
     tags: PropTypes.arrayOf(
       PropTypes.oneOfType([
         PropTypes.shape({

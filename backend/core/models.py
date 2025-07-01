@@ -48,7 +48,7 @@ class Question(models.Model):
         blank=True,
         help_text="e.g., LeetCode, personal interview",
     )
-    notes = models.TextField(
+    content = models.TextField(
         blank=True, help_text="Detailed description of the question"
     )
     slug = models.SlugField(
@@ -125,7 +125,7 @@ class QuestionLog(models.Model):
     solution_approach = models.CharField(
         max_length=100, blank=True, help_text="e.g., Brute force, Optimized"
     )
-    self_notes = models.TextField(blank=True)
+    self_content = models.TextField(blank=True)
 
     class Meta:
         ordering = ["-date_attempted"]

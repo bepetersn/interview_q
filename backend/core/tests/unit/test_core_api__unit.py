@@ -142,7 +142,7 @@ def test_list_questionlogs_view(client):
                 "time_spent_min": 42,
                 "outcome": "Solved",
                 "solution_approach": "Refactor",
-                "self_notes": "Updated log notes.",
+                "self_content": "Updated log notes.",
             },
             200,
             None,

@@ -39,7 +39,7 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
     time_spent_min: '',
     outcome: '',
     solution_approach: '',
-    self_notes: '',
+    self_content: '',
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -88,7 +88,7 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
             time_spent_min: '',
             outcome: '',
             solution_approach: '',
-            self_notes: '',
+            self_content: '',
           },
     );
     setOpen(true);
@@ -103,7 +103,7 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
       time_spent_min: '',
       outcome: '',
       solution_approach: '',
-      self_notes: '',
+      self_content: '',
     });
   };
 
@@ -146,16 +146,28 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
 
   return (
     <div>
-      <Button startIcon={<ArrowBack />} onClick={() => navigate('/')} sx={{ mb: 2 }}>Back to Questions</Button>
+      <Button
+        startIcon={<ArrowBack />}
+        onClick={() => {
+          if (embedded && onClose) {
+            onClose();
+          } else {
+            navigate('/');
+          }
+        }}
+        sx={{ mb: 2 }}
+      >
+        Back to Questions
+      </Button>
       <Typography variant="h4" gutterBottom>Attempts / Logs {questionTitle && `for "${questionTitle}"`}</Typography>
       <Button variant="contained" startIcon={<Add />} onClick={() => handleOpen()} sx={{ mb: 2 }}>Add Log</Button>
       {question && (
         <Box sx={{ textAlign: 'left', mb: 2 }}>
           <Typography variant="h6">{question.title}</Typography>
           {question.difficulty && <Chip label={question.difficulty} size="small" sx={{ ml: 1 }} />}
-          {question.notes && (
+          {question.content && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {question.notes}
+              {question.content}
             </Typography>
           )}
         </Box>
@@ -180,7 +192,7 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
                     <span style={{ display: 'block' }}>Outcome: {log.outcome}</span>
                     <span style={{ display: 'block' }}>Time Spent: {log.time_spent_min} min</span>
                     <span style={{ display: 'block' }}>Approach: {log.solution_approach}</span>
-                    <span style={{ display: 'block' }}>Notes: {log.self_notes}</span>
+                    <span style={{ display: 'block' }}>Content: {log.self_content}</span>
                   </>
                 }
               />
@@ -213,7 +225,7 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
             </Select>
           </FormControl>
           <TextField margin="dense" label="Solution Approach" name="solution_approach" value={form.solution_approach} onChange={handleChange} fullWidth />
-          <TextField margin="dense" label="Notes" name="self_notes" value={form.self_notes} onChange={handleChange} fullWidth multiline rows={2} />
+          <TextField margin="dense" label="Content" name="self_content" value={form.self_content} onChange={handleChange} fullWidth multiline rows={2} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
