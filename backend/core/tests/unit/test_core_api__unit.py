@@ -72,6 +72,7 @@ def test_create_views(client, endpoint, payload, expected_status):
     if endpoint == "/api/tags/" and expected_status == 201 and "name" not in payload:
         payload = dict(payload)
         payload["name"] = "Auto Tag"
+    print(f"Testing endpoint: {endpoint} with payload: {payload}")
     response = client.post(
         endpoint, data=json.dumps(payload), content_type="application/json"
     )
@@ -276,3 +277,94 @@ def test_create_questionlog_with_nonexistent_question(client):
         content_type="application/json",
     )
     assert response.status_code in (400, 404)
+
+
+@pytest.mark.django_db
+class TestQuestionContentSanitization:
+    """Test content sanitization in question API endpoints"""
+
+    def test_create_question_content_sanitization(self, client):
+        """Test that safe HTML is preserved and unsafe HTML is sanitized"""
+        payloads = [
+            {
+                "title": "Safe Content",
+                "content": "<p>This is <strong>safe</strong> content</p>",
+                "expected": "<p>This is <strong>safe</strong> content</p>",
+            },
+            {
+                "title": "Unsafe Content",
+                "content": "<p>Safe content</p><script>alert('xss')</script>",
+                "expected": "<p>Safe content</p>",
+            },
+        ]
+
+        for payload in payloads:
+            response = client.post(
+                "/api/questions/",
+                data=json.dumps(
+                    {"title": payload["title"], "content": payload["content"]}
+                ),
+                content_type="application/json",
+            )
+            assert response.status_code == 201
+            data = response.json()
+            assert data["content"] == payload["expected"]
+
+    def test_create_question_with_excessive_whitespace(self, client):
+        """Test that excessive whitespace is cleaned up"""
+        payload = {
+            "title": "Whitespace Test",
+            "content": "Line 1\n\n\nLine 2     with    spaces\n\n\nLine 3",
+        }
+        response = client.post(
+            "/api/questions/",
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        assert response.status_code == 201
+        data = response.json()
+        assert "\n\n\n" not in data["content"]
+        assert "   " not in data["content"]
+        assert "Line 1" in data["content"]
+        assert "Line 2" in data["content"]
+        assert "Line 3" in data["content"]
+
+    def test_create_question_with_short_content(self, client):
+        """Test that very short content after sanitization is rejected"""
+        payload = {
+            "title": "Short Content",
+            "content": "<script>alert('xss')</script>",
+        }
+        response = client.post(
+            "/api/questions/",
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        assert response.status_code == 400
+        assert "Content must be at least 3 characters long" in str(response.json())
+
+    def test_update_question_content_sanitization(self, client):
+        """Test that content is sanitized when updating questions"""
+        create_payload = {"title": "Update Test", "content": "Original content"}
+        create_response = client.post(
+            "/api/questions/",
+            data=json.dumps(create_payload),
+            content_type="application/json",
+        )
+        assert create_response.status_code == 201
+        question_id = create_response.json()["id"]
+
+        update_payload = {
+            "content": "<p>Updated content</p><script>alert('xss')</script>",
+        }
+        update_response = client.patch(
+            f"/api/questions/{question_id}/",
+            data=json.dumps(update_payload),
+            content_type="application/json",
+        )
+        assert update_response.status_code == 200
+        data = update_response.json()
+        assert "<p>" in data["content"]
+        assert "Updated content" in data["content"]
+        assert "<script>" not in data["content"]
+        assert "alert('xss')" not in data["content"]

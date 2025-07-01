@@ -1,7 +1,33 @@
 import hashlib
+import re
 import time
 
+import nh3
 from django.utils.text import slugify
+
+
+def sanitize_html(content):
+    """
+    Sanitize HTML content using nh3 library and clean up excessive newlines.
+
+    Args:
+        content (str): The HTML content to sanitize
+
+    Returns:
+        str: Sanitized and cleaned content
+    """
+    if not content:
+        return content
+    # Use nh3's default sanitization which is already quite comprehensive
+    sanitized = nh3.clean(content)
+    # Compacy and then remove newlines
+    cleaned = re.sub(r"\n{2,}", "\n", sanitized)
+    cleaned = cleaned.replace("\n", " ")
+    # Remove excessive spaces (more than 2 consecutive spaces)
+    cleaned = re.sub(r" {3,}", "  ", cleaned)
+    # Trim leading and trailing whitespace
+    cleaned = cleaned.strip()
+    return cleaned
 
 
 class SlugGenerator:

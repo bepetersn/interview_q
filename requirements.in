@@ -9,3 +9,4 @@ pyOpenSSL
 psycopg
 psycopg2-binary
 ddtrace
+nh3

@@ -96,8 +96,7 @@ class Question(models.Model):
         # Remove slug from kwargs to prevent user-supplied slug
         kwargs.pop("slug", None)
         super().__init__(*args, **kwargs)
-        if not self.slug and self.title:
-            self.slug = SlugGenerator.generate_unique_slug(self.__class__, self.title)
+        self.slug = SlugGenerator.generate_unique_slug(self.__class__, self.title)
 
     def __str__(self):
         return f"{self.title} [{self.slug}]"

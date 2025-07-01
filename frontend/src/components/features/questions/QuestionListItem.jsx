@@ -3,6 +3,47 @@ import { ListItem, ListItemText, IconButton, Chip, Box, Paper } from '@mui/mater
 import { Edit, Delete, ListAlt } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 
+const styles = {
+  questionTitleButton: {
+    cursor: 'pointer',
+    fontWeight: 700,
+    outline: 'none',
+    border: 'none',
+    background: 'none',
+    padding: 0,
+    font: 'inherit',
+    '&:hover': {
+      textDecoration: 'underline',
+    },
+  },
+  difficultyChip: {
+    ml: 1,
+    backgroundColor: 'primary.main',
+    color: 'white',
+    fontWeight: 'bold',
+    '& .MuiChip-label': {
+      fontSize: '0.75rem',
+    },
+    '&:hover': {
+      backgroundColor: 'primary.dark',
+    },
+  },
+  tagChip: {
+    mr: 0.5,
+    backgroundColor: 'secondary.light',
+    color: 'secondary.contrastText',
+    border: '1px solid',
+    borderColor: 'secondary.main',
+    '& .MuiChip-label': {
+      fontSize: '0.7rem',
+    },
+    '&:hover': {
+      backgroundColor: 'secondary.main',
+      color: 'white',
+    },
+  },
+};
+
 function QuestionListItem({ question, onEdit, onDelete, onViewLogs }) {
   return (
     <Paper elevation={3} sx={{ mb: 2, p: 2, background: '#f8fafc', borderRadius: 2, boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
@@ -14,25 +55,25 @@ function QuestionListItem({ question, onEdit, onDelete, onViewLogs }) {
         </Box>
       }>
         <ListItemText
-          primary={<Box>
-            <span
-              role="button"
-              tabIndex={0}
-              style={{ cursor: 'pointer', fontWeight: 700, outline: 'none' }}
-              onClick={() => onViewLogs(question.id)}
-              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') onViewLogs(question.id); }}
-              className="question-title-link"
-            >
-              {question.title}
-            </span> <Chip label={question.difficulty} size="small" sx={{ ml: 1 }} onClick={() => {}} />
-          </Box>}
+          primary={
+            <Box>
+              <Box component="button" onClick={() => onViewLogs(question.id)} sx={styles.questionTitleButton}>
+                {question.title}
+              </Box>
+              <Chip label={question.difficulty} size="small" sx={styles.difficultyChip} />
+            </Box>}
           secondary={
             <>
-              <span>{question.content}</span><br/>
               <span>
                 Tags:&nbsp;
-                {question.tags && question.tags.map(t => (
-                  <Chip key={t.id || t} label={t.name || t} size="small" sx={{ mr: 0.5 }} component="span" onClick={() => {}} />
+                {question.tags && question.tags.map(tag => (
+                  <Chip
+                    key={tag.id}
+                    label={tag.name}
+                    size="small"
+                    sx={styles.tagChip}
+                    component="span"
+                  />
                 ))}
               </span><br/>
             </>
@@ -68,7 +109,3 @@ QuestionListItem.propTypes = {
 };
 
 export default QuestionListItem;
-
-/* Add hover underline style */
-// In your global CSS (e.g., App.css or index.css):
-// .question-title-link:hover, .question-title-link:focus { text-decoration: underline; }

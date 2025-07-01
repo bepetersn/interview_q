@@ -21,6 +21,7 @@ importlib_metadata==8.7.0
 inflection==0.5.1
 jsonschema==4.24.0
 jsonschema-specifications==2025.4.1
+nh3==0.2.19
 opentelemetry-api==1.34.1
 packaging==25.0
 protobuf==6.31.1

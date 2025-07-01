@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from .models import Question, QuestionLog, Tag
+from .utils import sanitize_html
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -20,22 +21,11 @@ class QuestionSerializer(serializers.ModelSerializer):
         allow_empty=True,
     )
     tags = TagSerializer(many=True, read_only=True)
+    title = serializers.CharField(required=True)
 
     class Meta:
         model = Question
-        fields = [
-            "id",
-            "title",
-            "source",
-            "content",
-            "difficulty",
-            "is_active",
-            "created_at",
-            "updated_at",
-            "slug",
-            "tag_ids",
-            "tags",
-        ]
+        fields = ["id", "content", "tag_ids", "slug", "tags", "title"]
         read_only_fields = [
             "id",
             "user",
@@ -65,11 +55,33 @@ class QuestionSerializer(serializers.ModelSerializer):
 
         invalid_tag_ids = provided_tag_ids - user_tag_ids
         if invalid_tag_ids:
+            raise serializers.ValidationError(f"Invalid tag IDs: {invalid_tag_ids}")
+
+        return value
+
+    def validate_content(self, value):
+        """Sanitize HTML content and remove excessive newlines"""
+        if not value:
+            return value
+
+        # Sanitize the content using our utility function
+        sanitized_content = sanitize_html(value)
+
+        # Check if content is too short after sanitization
+        if len(sanitized_content.strip()) < 3:
             raise serializers.ValidationError(
-                f"Invalid tag IDs: {list(invalid_tag_ids)}. "
-                "Tags must exist and belong to the current user."
+                "Content must be at least 3 characters long after sanitization."
             )
 
+        return sanitized_content
+
+    def validate_title(self, value):
+        """Ensure that the title is always present and not empty"""
+        request = self.context.get("request")
+        if request and request.method == "PATCH":
+            return value  # Allow partial updates without title validation
+        if not value or not value.strip():
+            raise serializers.ValidationError("Title is required and cannot be empty.")
         return value
 
     def to_internal_value(self, data):
