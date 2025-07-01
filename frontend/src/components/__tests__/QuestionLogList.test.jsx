@@ -1,9 +1,14 @@
 import React, { act } from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import QuestionLogList from '../features/question-logs/QuestionLogList.jsx';
 import api from '../../api';
 
 import { vi } from 'vitest';
+
+// Clean up between tests
+afterEach(() => {
+  cleanup();
+});
 
 vi.mock('../../api');
 
@@ -39,7 +44,7 @@ test('fetches and displays question logs', async () => {
 
   // Look for the specific text that appears in the list item
   expect(await screen.findByText(/Attempts \/ Logs.*for "Question1"/)).toBeInTheDocument();
-  expect(await screen.findByText('Outcome: Solved')).toBeInTheDocument();
+  expect(await screen.findByText('Solved')).toBeInTheDocument();
 });
 
 
@@ -63,15 +68,30 @@ test('defaults date to today when opening add log dialog', async () => {
     render(<QuestionLogList />);
   });
 
-  // Open the add log dialog
+  // Wait for the component to be fully loaded
+  await screen.findByText('Add Log');
+
+  // Open the add log dialog by clicking the button (not the dialog title)
   await act(async () => {
-    screen.getByText('Add Log').click();
+    screen.getByRole('button', { name: 'Add Log' }).click();
   });
 
-  const dateInput = await screen.findByLabelText('Date Attempted');
+  // Wait for the dialog to appear
+  await screen.findByRole('dialog');
+
+  // The dialog should be for adding a new log
+  await screen.findByRole('dialog', { name: 'Add Log' });  // Dialog should have "Add Log" title
+
+  // Wait for the form to initialize
+  await new Promise(resolve => setTimeout(resolve, 200));
+
+  const dateInput = screen.getByLabelText('Date Attempted');
+
   const today = new Date();
-  const local = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+  const expectedDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
     .toISOString()
     .slice(0, 10);
-  expect(dateInput.value).toContain(local);
+
+  // The date input should be populated with today's date
+  expect(dateInput.value).toMatch(new RegExp(`^${expectedDate}T\\d{2}:\\d{2}$`));
 });

@@ -78,6 +78,18 @@ class TestSanitizeHtml:
         result = sanitize_html(content)
         assert result == "Line 1 Line 2 Line 3"
 
+    def test_sanitize_html_literal_newlines(self):
+        """Test that literal \\n strings are converted to spaces"""
+        content = "Line 1\\n\\nLine 2\\n\\n\\nLine 3"
+        result = sanitize_html(content)
+        assert result == "Line 1 Line 2 Line 3"
+
+    def test_sanitize_html_mixed_newlines(self):
+        """Test that both actual newlines and literal \\n strings are handled"""
+        content = "Line 1\n\nLine 2\\n\\nLine 3\nLine 4\\nLine 5"
+        result = sanitize_html(content)
+        assert result == "Line 1 Line 2 Line 3 Line 4 Line 5"
+
     def test_sanitize_html_excessive_spaces(self):
         """Test that excessive spaces are reduced"""
         content = "Word1     Word2      Word3"

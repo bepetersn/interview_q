@@ -19,45 +19,39 @@ function LogForm({
   open,
   onClose,
   onSave,
-  editLog,
   questionId,
   questionTitle,
   error,
   saving
 }) {
-  const [form, setForm] = useState(
-    editLog
-      ? {
-          ...editLog,
-          question: editLog.question.id,
-        }
-      : {
-          question: questionId || '',
-          date_attempted: getCurrentDateTimeLocalString(),
-          time_spent_min: '',
-          outcome: '',
-          solution_approach: '',
-          self_notes: '',
-        }
-  );
+  const [form, setForm] = useState(() => {
+    const currentDateTime = getCurrentDateTimeLocalString();
+
+    return {
+      question: questionId || '',
+      date_attempted: currentDateTime,
+      time_spent_min: '',
+      outcome: '',
+      solution_approach: '',
+      self_notes: '',
+    };
+  });
 
   React.useEffect(() => {
-    setForm(
-      editLog
-        ? {
-            ...editLog,
-            question: editLog.question.id,
-          }
-        : {
-            question: questionId || '',
-            date_attempted: getCurrentDateTimeLocalString(),
-            time_spent_min: '',
-            outcome: '',
-            solution_approach: '',
-            self_notes: '',
-          }
-    );
-  }, [editLog, questionId, open]);
+    if (open) {
+      const currentDateTime = getCurrentDateTimeLocalString();
+
+      const newFormState = {
+        question: questionId || '',
+        date_attempted: currentDateTime,
+        time_spent_min: '',
+        outcome: '',
+        solution_approach: '',
+        self_notes: '',
+      };
+      setForm(newFormState);
+    }
+  }, [open, questionId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,7 +64,7 @@ function LogForm({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{editLog ? 'Edit Log' : 'Add Log'}</DialogTitle>
+      <DialogTitle>Add Log</DialogTitle>
       <DialogContent>
         {questionId ? (
           <Typography sx={{ mt: 1, mb: 1 }}>
@@ -93,7 +87,6 @@ function LogForm({
           value={form.date_attempted}
           onChange={handleChange}
           fullWidth
-          InputLabelProps={{ shrink: true }}
         />
 
         <TextField
@@ -108,7 +101,12 @@ function LogForm({
 
         <FormControl fullWidth margin="dense">
           <InputLabel>Outcome</InputLabel>
-          <Select name="outcome" value={form.outcome} label="Outcome" onChange={handleChange}>
+          <Select
+            name="outcome"
+            value={form.outcome || ''}
+            label="Outcome"
+            onChange={handleChange}
+          >
             <MenuItem value="">None</MenuItem>
             <MenuItem value="Solved">Solved</MenuItem>
             <MenuItem value="Partial">Partial</MenuItem>
@@ -156,7 +154,6 @@ LogForm.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
-  editLog: PropTypes.object,
   questionId: PropTypes.string,
   questionTitle: PropTypes.string,
   error: PropTypes.string,

@@ -20,8 +20,13 @@ def sanitize_html(content):
         return content
     # Use nh3's default sanitization which is already quite comprehensive
     sanitized = nh3.clean(content)
-    # Compacy and then remove newlines
-    cleaned = re.sub(r"\n{2,}", "\n", sanitized)
+
+    # Handle both actual newlines and literal \n strings
+    # First replace literal \n strings with actual newlines
+    cleaned = sanitized.replace("\\n", "\n")
+    # Then compact multiple newlines into single newlines
+    cleaned = re.sub(r"\n{2,}", "\n", cleaned)
+    # Replace all remaining newlines with spaces
     cleaned = cleaned.replace("\n", " ")
     # Remove excessive spaces (more than 2 consecutive spaces)
     cleaned = re.sub(r" {3,}", "  ", cleaned)

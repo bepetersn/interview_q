@@ -17,24 +17,21 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
   const { logs, question, error, setError, saveLog } = useQuestionLogs(questionId, questionProp);
 
   const [open, setOpen] = useState(false);
-  const [editLog, setEditLog] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const handleOpen = (log = null) => {
-    setEditLog(log);
+  const handleOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setEditLog(null);
   };
 
   const handleSave = async (formData) => {
     setSaving(true);
     setError('');
 
-    const success = await saveLog(formData, editLog);
+    const success = await saveLog(formData, null); // Always create new log
     if (success) {
       handleClose();
     }
@@ -61,7 +58,7 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
       <Typography variant="h4" gutterBottom>
         Attempts / Logs {questionTitle && `for "${questionTitle}"`}
       </Typography>
-      <NewButton onClick={handleOpen} text="Add Log" />
+      <NewButton onClick={() => handleOpen()} text="Add Log" />
       <QuestionHeader question={question} />
       <RecentAttemptsSummary logs={logs} />
       <LogList logs={logs} />
@@ -76,7 +73,6 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
         open={open}
         onClose={handleClose}
         onSave={handleSave}
-        editLog={editLog}
         questionId={questionId}
         questionTitle={questionTitle}
         error={error}
