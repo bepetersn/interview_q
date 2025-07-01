@@ -11,7 +11,7 @@ vi.mock('../../api');
 const mockQuestion = {
   id: 1,
   title: 'Sample Question',
-  notes: 'Example',
+  content: 'Example',
   difficulty: 'Easy',
   topic_tags: [],
   is_active: true,

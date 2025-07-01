@@ -17,7 +17,7 @@ class Command(BaseCommand):
         tags = []
         for _ in range(10):
             tag_name = fake.word()
-            tag, created = Tag.objects.get_or_create(name=tag_name)
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
             tags.append(tag)
 
         # Create Questions
@@ -46,7 +46,7 @@ class Command(BaseCommand):
                     time_spent_min=random.randint(5, 120),
                     outcome=random.choice(["Solved", "Partial", "Failed"]),
                     solution_approach=fake.word(),
-                    self_notes=fake.text(),
+                    self_content=fake.text(),
                 )
 
         self.stdout.write(self.style.SUCCESS("Successfully created fake data"))

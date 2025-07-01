@@ -23,7 +23,7 @@ const mockLog = {
   time_spent_min: 30,
   outcome: 'Solved',
   solution_approach: '',
-  self_notes: '',
+  self_content: '',
 };
 
 test('fetches and displays question logs', async () => {

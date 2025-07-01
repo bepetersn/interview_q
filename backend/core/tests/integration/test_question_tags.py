@@ -34,7 +34,7 @@ def test_question_update_with_tag_ids():
     question_data = {
         "title": "Test Question",
         "source": "Test Platform",
-        "notes": "Test notes",
+        "content": "Test notes",
         "difficulty": "Hard",
         "tag_ids": [tag1.pk, tag2.pk],
     }

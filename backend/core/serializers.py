@@ -109,7 +109,7 @@ class QuestionLogSerializer(serializers.ModelSerializer):
             "time_spent_min",
             "outcome",
             "solution_approach",
-            "self_notes",
+            "self_content",
         ]
         read_only_fields = ["user"]
 
