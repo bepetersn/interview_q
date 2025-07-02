@@ -29,7 +29,7 @@ export function useQuestions() {
     }
   };
 
-  const saveQuestion = async (questionData, isEdit, editQuestionId) => {
+  const saveQuestion = async (questionData, isEdit, questionBeingEditedId) => {
     try {
       const { slug, ...payload } = questionData;
       payload.tag_ids = (payload.tag_ids || []).filter(id => tags.some(t => t.id === id));
@@ -39,7 +39,7 @@ export function useQuestions() {
       }
 
       if (isEdit) {
-        await api.put(`questions/${editQuestionId}/`, payload);
+        await api.put(`questions/${questionBeingEditedId}/`, payload);
       } else {
         await api.post('questions/', payload);
       }
@@ -48,6 +48,18 @@ export function useQuestions() {
       return { success: true };
     } catch (e) {
       const errorMessage = e?.response?.data?.detail || e.message || 'Error saving question.';
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // Update a question and return the updated question object
+  const putQuestion = async (id, payload) => {
+    try {
+      const response = await api.put(`questions/${id}/`, payload);
+      await fetchQuestions();
+      return { success: true, data: response.data };
+    } catch (e) {
+      const errorMessage = e?.response?.data?.detail || e.message || 'Error updating question.';
       return { success: false, error: errorMessage };
     }
   };
@@ -79,6 +91,8 @@ export function useQuestions() {
     fetchQuestions,
     fetchTags,
     saveQuestion,
-    deleteQuestion
+    deleteQuestion,
+    putQuestion,
+    sources: ["CodeWars", "LeetCode", "HackerRank", "Other"] // Added sources as a source of truth temporarily
   };
 }

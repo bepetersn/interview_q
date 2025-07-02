@@ -15,16 +15,26 @@ import {
   ListItemText
 } from '@mui/material';
 
-function QuestionFormDialog({
+
+const getContentPlaceholder = (form) => {
+  if (form.source === "CodeWars" || !form.source) {
+    return "<p>Example content</p><ul><li>Point 1</li><li>Point 2</li></ul>";
+  }
+  return `Example for ${form.source}`;
+};
+
+
+function QuestionEditForm({
   open,
   onClose,
-  editQuestion,
+  questionBeingEdited,
   form,
   onFormChange,
-  onTagsChange,
   onSave,
   saving,
-  tags
+  tags = [],
+  sources = [],
+  onTagsChange,
 }) {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -32,38 +42,60 @@ function QuestionFormDialog({
   };
 
   const handleTagsChangeLocal = (e) => {
-    onTagsChange(e.target.value);
+    if (onTagsChange) {
+      onTagsChange(e.target.value);
+    }
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{editQuestion ? 'Edit Question' : 'Add Question'}</DialogTitle>
+      <DialogTitle>{questionBeingEdited ? 'Edit Question' : 'Add Question'}</DialogTitle>
       <DialogContent>
         <TextField
           margin="dense"
           label="Title"
           name="title"
-          value={form.title}
+          value={form.title || ''}
           onChange={handleChange}
           fullWidth
         />
-        <TextField
-          margin="dense"
-          label="Source"
-          name="source"
-          value={form.source}
-          onChange={handleChange}
-          fullWidth
-        />
+        <FormControl fullWidth margin="dense">
+          <InputLabel shrink>Source</InputLabel> {/* Ensures the label doesn't overlap the placeholder */}
+          <Select
+            name="source"
+            value={form.source || (sources[0] || '')}
+            label="Source"
+            onChange={handleChange}
+            displayEmpty
+          >
+            {(Array.isArray(sources) ? sources : []).map((source) => (
+              <MenuItem key={source} value={source}>{source}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {form.source === "Other" && (
+          <TextField
+            margin="dense"
+            label="Custom Source"
+            name="customSource"
+            value={form.customSource || ""}
+            onChange={handleChange}
+            fullWidth
+          />
+        )}
         <TextField
           margin="dense"
           label="Content"
           name="content"
-          value={form.content}
+          placeholder={getContentPlaceholder(form)}
+          value={form.content || ''}
           onChange={handleChange}
           fullWidth
           multiline
           rows={2}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
         />
         <FormControl fullWidth margin="dense">
           <InputLabel>Difficulty</InputLabel>
@@ -84,7 +116,7 @@ function QuestionFormDialog({
           <Select
             multiple
             name="tag_ids"
-            value={form.tag_ids}
+            value={form.tag_ids || []}
             onChange={handleTagsChangeLocal}
             renderValue={(selected) =>
               tags.filter(t => selected.includes(t.id)).map(t => t.name).join(', ')
@@ -92,7 +124,7 @@ function QuestionFormDialog({
           >
             {tags.map((tag) => (
               <MenuItem key={tag.id} value={tag.id}>
-                <Checkbox checked={form.tag_ids.indexOf(tag.id) > -1} />
+                <Checkbox checked={(form.tag_ids || []).indexOf(tag.id) > -1} />
                 <ListItemText primary={tag.name} />
               </MenuItem>
             ))}
@@ -109,10 +141,10 @@ function QuestionFormDialog({
   );
 }
 
-QuestionFormDialog.propTypes = {
+QuestionEditForm.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  editQuestion: PropTypes.object,
+  questionBeingEdited: PropTypes.object,
   form: PropTypes.shape({
     title: PropTypes.string.isRequired,
     source: PropTypes.string.isRequired,
@@ -120,12 +152,14 @@ QuestionFormDialog.propTypes = {
     difficulty: PropTypes.string.isRequired,
     tag_ids: PropTypes.array.isRequired,
     is_active: PropTypes.bool.isRequired,
+    customSource: PropTypes.string,
   }).isRequired,
   onFormChange: PropTypes.func.isRequired,
-  onTagsChange: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   saving: PropTypes.bool.isRequired,
-  tags: PropTypes.array.isRequired,
+  tags: PropTypes.array,
+  sources: PropTypes.array,
+  onTagsChange: PropTypes.func,
 };
 
-export default QuestionFormDialog;
+export default QuestionEditForm;

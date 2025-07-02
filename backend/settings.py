@@ -15,10 +15,10 @@ from pathlib import Path
 
 from dotenv import load_dotenv  # Added for python-dotenv
 
-# Load environment variables from a .env file if present
-load_dotenv()
-
 BASE_DIR = Path(__file__).resolve().parent
+
+# Load environment variables from a .env file if present
+load_dotenv(BASE_DIR / ".." / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -193,6 +193,10 @@ def get_env_list(key, default=""):
 
 # CORS and CSRF configuration
 CORS_ALLOW_CREDENTIALS = True
+
+print("DEBUG-check FRONTEND_ORIGINS =", os.environ.get("FRONTEND_ORIGINS"))
+print("DEBUG-check BACKEND_ORIGINS =", os.environ.get("BACKEND_ORIGINS"))
+
 CORS_ALLOWED_ORIGINS = get_env_list("FRONTEND_ORIGINS")
 CSRF_TRUSTED_ORIGINS = get_env_list("BACKEND_ORIGINS") + get_env_list(
     "FRONTEND_ORIGINS"

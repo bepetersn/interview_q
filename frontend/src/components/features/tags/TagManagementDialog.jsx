@@ -17,12 +17,12 @@ function TagManagementDialog({ open, onClose, onTagsUpdated }) {
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Manage Tags</DialogTitle>
+      <DialogTitle sx={{ color: '#1976d2', fontWeight: 'bold' }}>Manage Tags</DialogTitle>
       <DialogContent>
         <TagList embedded />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Close</Button>
+        <Button onClick={handleClose} sx={{ backgroundColor: '#1976d2', color: '#ffffff', fontWeight: 'bold', '&:hover': { backgroundColor: '#004ba0' } }}>Close</Button>
       </DialogActions>
     </Dialog>
   );

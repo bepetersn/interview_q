@@ -5,8 +5,8 @@ import fs from 'fs'
 import path from 'path'
 
 // Always read cert/key from project root
-const cert = fs.readFileSync(path.resolve(__dirname, '../example.com+5.pem'))
-const key = fs.readFileSync(path.resolve(__dirname, '../example.com+5-key.pem'))
+const cert = fs.readFileSync(path.resolve(__dirname, '../localhost.pem'))
+const key = fs.readFileSync(path.resolve(__dirname, '../localhost-key.pem'))
 
 export default defineConfig({
   plugins: [react()],
@@ -15,7 +15,7 @@ export default defineConfig({
       key,
       cert,
     },
-    host: '127.0.0.1',
+    host: '0.0.0.0',
     port: 5173,
   },
 })

@@ -1,69 +1,41 @@
 import React from 'react';
 import { ListItem, ListItemText, IconButton, Chip, Box, Paper } from '@mui/material';
-import { Edit, Delete, ListAlt } from '@mui/icons-material';
+import { Delete, ListAlt } from '@mui/icons-material';
 import PropTypes from 'prop-types';
+import './QuestionListItem.css';
 
-const styles = {
-  questionTitleButton: {
-    cursor: 'pointer',
-    fontWeight: 700,
-    outline: 'none',
-    border: 'none',
-    background: 'none',
-    padding: 0,
-    font: 'inherit',
-    '&:hover': {
-      textDecoration: 'underline',
-    },
-  },
-  difficultyChip: {
-    ml: 1,
-    backgroundColor: 'primary.main',
-    color: 'white',
-    fontWeight: 'bold',
-    '& .MuiChip-label': {
-      fontSize: '0.75rem',
-    },
-    '&:hover': {
-      backgroundColor: 'primary.dark',
-    },
-  },
-  tagChip: {
-    mr: 0.5,
-    backgroundColor: 'secondary.light',
-    color: 'secondary.contrastText',
-    border: '1px solid',
-    borderColor: 'secondary.main',
-    '& .MuiChip-label': {
-      fontSize: '0.7rem',
-    },
-    '&:hover': {
-      backgroundColor: 'secondary.main',
-      color: 'white',
-    },
-  },
-};
+function QuestionListItem({ question, onDelete, onViewLogs }) {
+  const getDifficultyClass = (difficulty) => {
+    switch (difficulty?.toLowerCase()) {
+      case 'easy':
+        return 'easy';
+      case 'medium':
+        return 'medium';
+      case 'hard':
+        return 'hard';
+      default:
+        return '';
+    }
+  };
 
-function QuestionListItem({ question, onEdit, onDelete, onViewLogs }) {
   return (
-    <Paper elevation={3} sx={{ mb: 2, p: 2, background: '#f8fafc', borderRadius: 2, boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
+    <Paper elevation={3} sx={{ mb: 2, p: 1.5, background: '#ffffff', borderRadius: 2, boxShadow: '0 2px 12px rgba(0,0,0,0.15)' }}>
       <ListItem key={question.id} alignItems="flex-start" disableGutters secondaryAction={
         <Box>
-          <IconButton edge="end" onClick={() => onEdit(question)}><Edit /></IconButton>
-          <IconButton edge="end" onClick={() => onDelete(question.id)}><Delete /></IconButton>
           <IconButton edge="end" onClick={() => onViewLogs(question.id)} title="View Attempts"><ListAlt /></IconButton>
+          <IconButton edge="end" onClick={() => onDelete(question.id)} title="Delete Question"><Delete /></IconButton>
         </Box>
       }>
         <ListItemText
           primary={
-            <Box>
-              <Box component="button" onClick={() => onViewLogs(question.id)} sx={styles.questionTitleButton}>
+            <Box display="flex" alignItems="center">
+              <button className="question-title-button" onClick={() => onViewLogs(question.id)}>
                 {question.title}
-              </Box>
-              <Chip label={question.difficulty} size="small" sx={styles.difficultyChip} />
+              </button>
+              <Chip label={question.difficulty} size="small" className={`difficulty-chip ${getDifficultyClass(question.difficulty)}`} sx={{ ml: 1 }} />
             </Box>}
           secondary={
-            <>
+            <Box mt={1}>
               <span>
                 Tags:&nbsp;
                 {question.tags && question.tags.map(tag => (
@@ -71,12 +43,15 @@ function QuestionListItem({ question, onEdit, onDelete, onViewLogs }) {
                     key={tag.id}
                     label={tag.name}
                     size="small"
-                    sx={styles.tagChip}
+                    className="tag-chip"
                     component="span"
                   />
                 ))}
-              </span><br/>
-            </>
+              </span>
+              <span style={{ marginLeft: '8px' }}>
+                Attempts: {question.attempts_count || 0}, Last: {question.last_attempted_at ? new Date(question.last_attempted_at).toLocaleDateString() : 'Never'}
+              </span>
+            </Box>
           }
           slotProps={{ secondary: { component: 'div' } }}
         />
@@ -102,8 +77,9 @@ QuestionListItem.propTypes = {
       ])
     ),
     is_active: PropTypes.bool,
+    last_attempted_at: PropTypes.string,
+    attempts_count: PropTypes.number,
   }).isRequired,
-  onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onViewLogs: PropTypes.func.isRequired,
 };

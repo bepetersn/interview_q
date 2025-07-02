@@ -16,7 +16,7 @@ components/
 │   │   ├── RegisterPage.jsx  # Registration form and logic
 │   │   └── index.js          # Auth feature exports
 │   ├── questions/            # Question management features
-│   │   ├── QuestionFormDialog.jsx      # Create/edit question form
+│   │   ├── QuestionEditForm.jsx      # Create/edit question form
 │   │   ├── QuestionListHeader.jsx      # Header with actions
 │   │   ├── QuestionListItem.jsx        # Individual question display
 │   │   ├── QuestionsDisplaySection.jsx # Questions list display
@@ -59,11 +59,11 @@ components/
 
 ```jsx
 // Import from feature index files for cleaner imports
-import { QuestionFormDialog, QuestionListHeader } from '../features/questions/index.js';
+import { QuestionEditForm, QuestionListHeader } from '../features/questions/index.js';
 import { TagManagementDialog } from '../features/tags/index.js';
 
 // Or import from the main components index
-import { QuestionFormDialog, LoginPage } from '../../components/index.js';
+import { QuestionEditForm, LoginPage } from '../../components/index.js';
 ```
 
 ### Benefits of This Organization

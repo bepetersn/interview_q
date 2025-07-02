@@ -38,9 +38,6 @@ Dialog component for creating and editing logs. Handles all form state internall
 - `error` - Error message to display
 - `saving` - Boolean indicating save operation in progress
 
-### LogList.jsx
-Placeholder component for future log list/table functionality. Currently returns null as the original component only showed recent attempts in the summary.
-
 **Props:**
 - `logs` - Array of log objects
 

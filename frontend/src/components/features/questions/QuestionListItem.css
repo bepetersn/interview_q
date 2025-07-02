@@ -1,0 +1,66 @@
+/* Styles for QuestionListItem component */
+
+:root {
+  --mui-primary-main: #6a1b9a; /* Default primary color */
+  --mui-primary-dark: #4a148c; /* Dark primary color */
+  --mui-secondary-light: #ab47bc; /* Light secondary color */
+  --mui-secondary-main: #8e24aa; /* Main secondary color */
+  --mui-secondary-contrastText: #ffffff; /* Contrast text for secondary color */
+  --difficulty-easy: #4caf50; /* Green for easy */
+  --difficulty-medium: #ff8c00; /* Amber for medium */
+  --difficulty-hard: #f44336; /* Red for hard */
+}
+
+.question-title-button {
+  cursor: pointer;
+  outline: none;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+}
+
+.question-title-button:hover {
+  text-decoration: underline;
+}
+
+.difficulty-chip {
+  margin-left: 8px;
+  font-weight: bold;
+}
+
+.difficulty-chip.easy {
+  background-color: var(--difficulty-easy);
+  color: white; /* High contrast for green */
+}
+
+.difficulty-chip.medium {
+  background-color: var(--difficulty-medium);
+  color: black; /* High contrast for amber */
+}
+
+.difficulty-chip.hard {
+  background-color: var(--difficulty-hard);
+  color: white; /* High contrast for red */
+}
+
+.difficulty-chip .MuiChip-label {
+  font-size: 0.75rem;
+}
+
+.tag-chip {
+  margin-right: 4px;
+  background-color: var(--mui-secondary-light);
+  color: var(--mui-secondary-contrastText);
+  border: 1px solid var(--mui-secondary-main);
+}
+
+.tag-chip .MuiChip-label {
+  font-size: 0.7rem;
+}
+
+.tag-chip:hover {
+  background-color: var(--mui-secondary-main);
+  color: white;
+}

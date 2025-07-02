@@ -11,12 +11,12 @@ const initialFormState = {
 
 export function useQuestionForm() {
   const [open, setOpen] = useState(false);
-  const [editQuestion, setEditQuestion] = useState(null);
+  const [questionBeingEdited, setQuestionBeingEdited] = useState(null);
   const [form, setForm] = useState(initialFormState);
   const [saving, setSaving] = useState(false);
 
   const handleOpen = (question = null) => {
-    setEditQuestion(question);
+    setQuestionBeingEdited(question);
     const { slug, ...rest } = question || {};
     setForm(question ? {
       ...rest,
@@ -27,7 +27,7 @@ export function useQuestionForm() {
 
   const handleClose = () => {
     setOpen(false);
-    setEditQuestion(null);
+    setQuestionBeingEdited(null);
     setForm(initialFormState);
   };
 
@@ -41,7 +41,7 @@ export function useQuestionForm() {
 
   return {
     open,
-    editQuestion,
+    questionBeingEdited,
     form,
     saving,
     setSaving,

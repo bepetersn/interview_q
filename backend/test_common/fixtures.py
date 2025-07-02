@@ -9,14 +9,14 @@ from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.test import Client
 
-BASE_URL = "https://127.0.0.1:8000/api"
+BASE_URL = "https://localhost:8000/api"
 
 REQUESTS_VERIFY = (
     False  # Set to False to disable SSL verification globally for local/dev
 )
 
 
-def is_server_running(host="127.0.0.1", port=8000):
+def is_server_running(host="localhost", port=8000):
     try:
         with socket.create_connection((host, port), timeout=1):
             return True
@@ -24,7 +24,7 @@ def is_server_running(host="127.0.0.1", port=8000):
         return False
 
 
-def wait_for_server(host="127.0.0.1", port=8000, timeout=15):
+def wait_for_server(host="localhost", port=8000, timeout=15):
     start = time.time()
     while time.time() - start < timeout:
         if is_server_running(host, port):

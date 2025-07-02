@@ -20,6 +20,8 @@ class QuestionSerializer(serializers.ModelSerializer):
         allow_empty=True,
     )
     tags = TagSerializer(many=True, read_only=True)
+    last_attempted_at = serializers.DateTimeField(read_only=True)
+    attempts_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Question
@@ -35,6 +37,8 @@ class QuestionSerializer(serializers.ModelSerializer):
             "title",
             "created_at",
             "updated_at",
+            "last_attempted_at",
+            "attempts_count",
         ]
         read_only_fields = [
             "id",
@@ -42,6 +46,8 @@ class QuestionSerializer(serializers.ModelSerializer):
             "slug",
             "created_at",
             "updated_at",
+            "last_attempted_at",
+            "attempts_count",
         ]
 
     def validate_tag_ids(self, value):

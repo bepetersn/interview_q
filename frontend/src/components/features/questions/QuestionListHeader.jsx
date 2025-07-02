@@ -6,6 +6,7 @@ import {
   Box
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import './QuestionListHeader.css';
 
 function QuestionListHeader({ onAddQuestion, onManageTags, error }) {
   return (
@@ -15,23 +16,23 @@ function QuestionListHeader({ onAddQuestion, onManageTags, error }) {
           Questions
         </Typography>
         <Button
-          variant="outlined"
+          className="add-question-button"
+          variant="contained"
           startIcon={<Add />}
           onClick={onAddQuestion}
-          sx={{ mb: 1, ml: 1 }}
         >
           Add Question
         </Button>
+        <Button
+          className="manage-tags-button"
+          variant="outlined"
+          onClick={onManageTags}
+        >
+          Manage Tags
+        </Button>
       </Box>
-      <Button
-        variant="text"
-        onClick={onManageTags}
-        sx={{ mb: 2, ml: 1 }}
-      >
-        Manage Tags
-      </Button>
       {error && (
-        <Typography color="error" sx={{ mb: 2, ml: 1 }}>
+        <Typography className="error-message">
           {error}
         </Typography>
       )}

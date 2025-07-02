@@ -11,5 +11,8 @@
     "@vitest/ui": "^3.2.3",
     "jsdom": "^26.1.0",
     "vitest": "^3.2.3"
+  },
+  "dependencies": {
+    "react-quill": "^2.0.0"
   }
 }

@@ -2,7 +2,9 @@
 import axios from 'axios';
 import { getCookie } from './utils.js';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://127.0.0.1:8000';
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:8000';
+// To support access via IP (e.g., 100.115.92.194), you can set VITE_API_BASE_URL in your .env or .env.local file, e.g.:
+// VITE_API_BASE_URL=https://100.115.92.194:8000
 const api = axios.create({
     baseURL: baseURL + '/api/',
     headers: {

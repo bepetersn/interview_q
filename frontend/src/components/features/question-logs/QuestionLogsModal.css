@@ -135,3 +135,11 @@
   word-break: break-word;
   max-width: 100%;
 }
+
+.error-message {
+  color: red;
+}
+
+.error-message-box {
+  padding: 16px; /* Equivalent to MUI spacing 2 (2 * 8px) */
+}

@@ -1,0 +1,25 @@
+/* Styles for QuestionListHeader component */
+
+.add-question-button {
+  margin-bottom: 2rem;
+  margin-left: auto;
+  background-color: #1976d2;
+  color: #ffffff;
+}
+
+.add-question-button:hover {
+  background-color: #004ba0;
+}
+
+.manage-tags-button {
+  margin-bottom: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.error-message {
+  margin-bottom: 2rem;
+  margin-left: 1rem;
+  color: red;
+}

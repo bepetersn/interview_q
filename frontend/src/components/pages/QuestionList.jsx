@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
-
 import {
-  QuestionFormDialog,
   QuestionListHeader,
-  QuestionsDisplaySection
+  QuestionsDisplaySection,
+  QuestionEditForm
 } from '../features/questions/index.js';
 import { TagManagementDialog } from '../features/tags/index.js';
 import { QuestionLogsModal } from '../features/question-logs/index.js';
 import { useQuestions } from '../../hooks/useQuestions.js';
-import { useQuestionForm } from '../../hooks/useQuestionForm.js';
+
+// Helper to get initial form data for a new question
+function getInitialFormData(sources) {
+  return {
+    title: "",
+    source: sources[0],
+    content: "",
+    difficulty: "Easy",
+    tag_ids: [],
+    is_active: true,
+  };
+}
 
 function QuestionList() {
-  // Use custom hooks
   const {
     questions,
     tags,
@@ -19,44 +28,18 @@ function QuestionList() {
     error,
     setError,
     fetchTags,
+    deleteQuestion,
+    fetchQuestions,
     saveQuestion,
-    deleteQuestion
+    sources,
   } = useQuestions();
 
-  const {
-    open,
-    editQuestion,
-    form,
-    saving,
-    setSaving,
-    handleOpen,
-    handleClose,
-    handleFormChange,
-    handleTagsChange
-  } = useQuestionForm();
-
-  // Local state for dialogs and logs
   const [tagDialogOpen, setTagDialogOpen] = useState(false);
   const [logsOpen, setLogsOpen] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [questionFormOpen, setQuestionFormOpen] = useState(false);
+  const [formData, setFormData] = useState(getInitialFormData(sources));
 
-  // Handle save operation
-  const handleSave = async () => {
-    setSaving(true);
-    setError("");
-
-    const result = await saveQuestion(form, !!editQuestion, editQuestion?.id);
-
-    if (result.success) {
-      handleClose();
-    } else {
-      setError(result.error);
-    }
-
-    setSaving(false);
-  };
-
-  // Handle delete operation
   const handleDelete = async (id) => {
     setError("");
     const result = await deleteQuestion(id);
@@ -66,17 +49,48 @@ function QuestionList() {
     }
   };
 
-  // Handle viewing logs
   const handleViewLogs = (id) => {
     const question = questions.find(q => q.id === id);
     setSelectedQuestion(question);
     setLogsOpen(true);
   };
 
+  const handleAddQuestion = () => {
+    setQuestionFormOpen(true);
+  };
+
+  const handleFormChange = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
+
+  const handleTagsChange = (tags) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      tag_ids: tags,
+    }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const result = await saveQuestion(formData, false, null);
+      if (result.success) {
+        await fetchQuestions();
+        setQuestionFormOpen(false);
+      } else {
+        console.error("Error saving question:", result.error);
+      }
+    } catch (error) {
+      console.error("Unexpected error saving question:", error);
+    }
+  };
+
   return (
     <div>
       <QuestionListHeader
-        onAddQuestion={() => handleOpen()}
+        onAddQuestion={handleAddQuestion}
         onManageTags={() => setTagDialogOpen(true)}
         error={error}
       />
@@ -84,33 +98,43 @@ function QuestionList() {
       <QuestionsDisplaySection
         questions={questions}
         loading={loading}
-        onEdit={handleOpen}
         onDelete={handleDelete}
         onViewLogs={handleViewLogs}
       />
 
-      <QuestionFormDialog
-        open={open}
-        onClose={handleClose}
-        editQuestion={editQuestion}
-        form={form}
-        onFormChange={handleFormChange}
-        onTagsChange={handleTagsChange}
-        onSave={handleSave}
-        saving={saving}
-        tags={tags}
-      />
+      {/* /////////////////
+      // Dialogs
+      ///////////////////// */}
 
+      {/* for Tag Management */}
       <TagManagementDialog
         open={tagDialogOpen}
         onClose={() => setTagDialogOpen(false)}
         onTagsUpdated={fetchTags}
       />
 
+      {/* for Question Logs */}
       <QuestionLogsModal
-        open={logsOpen}
-        onClose={() => { setLogsOpen(false); setSelectedQuestion(null); }}
+        isOpen={logsOpen}
+        onClose={() => {
+          setLogsOpen(false);
+          setSelectedQuestion(null);
+        }}
         question={selectedQuestion}
+      />
+
+      {/* for New Question */}
+      <QuestionEditForm
+        open={questionFormOpen}
+        onClose={() => setQuestionFormOpen(false)}
+        questionBeingEdited={null}
+        form={formData}
+        onFormChange={handleFormChange}
+        onSave={handleSave}
+        saving={false}
+        tags={tags}
+        sources={sources}
+        onTagsChange={handleTagsChange}
       />
     </div>
   );

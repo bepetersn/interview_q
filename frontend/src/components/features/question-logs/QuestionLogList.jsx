@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Typography, Box } from '@mui/material';
-import { BackButton, NewButton } from '../../common';
+import { NewButton } from '../../common';
 import QuestionHeader from './QuestionHeader';
 import RecentAttemptsSummary from './RecentAttemptsSummary';
 import LogForm from './LogForm';
-import LogList from './LogList';
 import { useQuestionLogs } from './useQuestionLogs';
 import './QuestionLogList.css';
 
 function QuestionLogList({ questionId: propQuestionId, embedded = false, question: questionProp, onClose }) {
   const { questionId: paramQuestionId } = useParams();
   const questionId = propQuestionId || paramQuestionId;
-  const navigate = useNavigate();
 
   const { logs, question, error, setError, saveLog } = useQuestionLogs(questionId, questionProp);
 
@@ -40,14 +38,6 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
     setSaving(false);
   };
 
-  const handleBack = () => {
-    if (embedded) {
-      onClose();
-    } else {
-      navigate('/');
-    }
-  };
-
   return (
     <div className="question-log-list-container">
       <div className="question-log-list-header">
@@ -65,7 +55,6 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
               />
             </Box>
           )}
-          <LogList logs={logs} />
         </div>
         <RecentAttemptsSummary logs={logs} className="recent-attempts-summary" />
       </div>
