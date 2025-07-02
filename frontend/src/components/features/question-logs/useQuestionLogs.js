@@ -40,7 +40,7 @@ export function useQuestionLogs(questionId, questionProp) {
       fetchLogs();
       fetchQuestion();
     }
-  }, [questionId]);
+  }, [questionId, questionProp]);
 
   const saveLog = async (formData, editLog) => {
     setError('');
