@@ -1,52 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Chip, Box } from '@mui/material';
-
-const styles = {
-  difficultyChip: {
-    ml: 1,
-    backgroundColor: 'primary.main',
-    color: 'white',
-    fontWeight: 'bold',
-    '& .MuiChip-label': {
-      fontSize: '0.75rem',
-    },
-    '&:hover': {
-      backgroundColor: 'primary.dark',
-    },
-  },
-  tagChip: {
-    mr: 0.5,
-    backgroundColor: 'secondary.light',
-    color: 'secondary.contrastText',
-    border: '1px solid',
-    borderColor: 'secondary.main',
-    '& .MuiChip-label': {
-      fontSize: '0.7rem',
-    },
-    '&:hover': {
-      backgroundColor: 'secondary.main',
-      color: 'white',
-    },
-  },
-};
+import './QuestionHeader.css';
 
 function QuestionHeader({ question }) {
   if (!question) return null;
 
   return (
-    <Box sx={{ textAlign: 'left', mb: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+    <Box className="question-header-container">
+      <Box className="question-header-title-row">
+        <Typography variant="h4" className="question-header-title">
           {question.title}
         </Typography>
-        {question.difficulty && (
-          <Chip label={question.difficulty} size="small" sx={styles.difficultyChip} />
-        )}
+        <Box className="question-header-actions">
+          {question.difficulty && (
+            <Chip
+              label={question.difficulty}
+              size="small"
+              className="question-header-difficulty-chip"
+              sx={{
+                backgroundColor: '#e0e0e0',
+                color: 'rgba(0, 0, 0, 0.6)',
+                '&:hover': {
+                  backgroundColor: '#c8e6c9',
+                  color: '#1b5e20'
+                }
+              }}
+            />
+          )}
+        </Box>
       </Box>
 
       {question.tags && question.tags.length > 0 && (
-        <Box sx={{ mb: 2 }}>
+        <Box className="question-header-tags-container">
           <Typography variant="body2" component="span" color="text.secondary">
             Tags:&nbsp;
           </Typography>
@@ -55,20 +41,20 @@ function QuestionHeader({ question }) {
               key={tag.id}
               label={tag.name}
               size="small"
-              sx={styles.tagChip}
+              className="question-header-tag-chip"
               component="span"
+              sx={{
+                backgroundColor: '#f0f0f0 !important',
+                color: 'rgba(0, 0, 0, 0.6) !important',
+                border: '1px solid #d0d0d0 !important',
+                '&:hover': {
+                  backgroundColor: '#d0d0d0 !important',
+                  color: 'rgba(0, 0, 0, 0.87) !important'
+                }
+              }}
             />
           ))}
         </Box>
-      )}
-
-      {question.content && (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mb: 2 }}
-          dangerouslySetInnerHTML={{ __html: question.content }}
-        />
       )}
     </Box>
   );

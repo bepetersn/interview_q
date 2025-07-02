@@ -14,6 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import { getCurrentDateTimeLocalString } from '../../../utils';
+import './LogForm.css';
 
 function LogForm({
   open,
@@ -67,7 +68,7 @@ function LogForm({
       <DialogTitle>Add Log</DialogTitle>
       <DialogContent>
         {questionId ? (
-          <Typography sx={{ mt: 1, mb: 1 }}>
+          <Typography className="log-form-question-info">
             <b>Question:</b> {questionTitle}
           </Typography>
         ) : (
@@ -135,7 +136,7 @@ function LogForm({
         />
 
         {error && (
-          <Typography color="error" sx={{ mt: 2 }}>
+          <Typography color="error" className="log-form-error">
             {error}
           </Typography>
         )}

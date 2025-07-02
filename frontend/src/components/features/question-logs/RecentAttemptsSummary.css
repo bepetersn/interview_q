@@ -1,0 +1,76 @@
+/* RecentAttemptsSummary styles */
+
+.recent-attempts-container {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 8px;
+  background-color: #f0f4f8;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  vertical-align: bottom;
+}
+
+.recent-attempts-title {
+  font-weight: 600;
+  margin-bottom: 16px !important;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.recent-attempts-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.recent-attempts-item:last-child {
+  margin-bottom: 0;
+}
+
+.recent-attempts-date {
+  min-width: 70px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.recent-attempts-chip {
+  font-size: 0.65rem !important;
+  height: 20px !important;
+}
+
+.recent-attempts-chip-solved {
+  background-color: #c8e6c9 !important;
+  color: #1b5e20 !important;
+}
+
+.recent-attempts-chip-partial {
+  background-color: #fff3c4 !important;
+  color: #e65100 !important;
+}
+
+.recent-attempts-chip-failed {
+  background-color: #ffcdd2 !important;
+  color: #c62828 !important;
+}
+
+.recent-attempts-chip-default {
+  background-color: #e0e0e0 !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.recent-attempts-time {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.recent-attempts-approach {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.recent-attempts-empty {
+  margin-top: 16px;
+  color: rgba(0, 0, 0, 0.54);
+  font-style: italic;
+}

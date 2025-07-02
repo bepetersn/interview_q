@@ -9,7 +9,7 @@ The main container component that orchestrates all the smaller components. It ha
 
 **Props:**
 - `questionId` - ID of the question
-- `embedded` - Boolean to indicate if used in embedded mode (drawer)
+- `embedded` - Boolean to indicate if used in embedded mode (modal)
 - `question` - Question object (for embedded usage)
 - `onClose` - Callback function for closing
 
@@ -76,7 +76,7 @@ import { QuestionLogList } from './components/features/question-logs';
 // Standalone usage
 <QuestionLogList />
 
-// Embedded usage (in drawer)
+// Embedded usage (in modal)
 <QuestionLogList
   questionId="123"
   embedded={true}

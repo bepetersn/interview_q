@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { BackButton, NewButton } from '../../common';
 import QuestionHeader from './QuestionHeader';
 import RecentAttemptsSummary from './RecentAttemptsSummary';
 import LogForm from './LogForm';
 import LogList from './LogList';
 import { useQuestionLogs } from './useQuestionLogs';
+import './QuestionLogList.css';
 
 function QuestionLogList({ questionId: propQuestionId, embedded = false, question: questionProp, onClose }) {
   const { questionId: paramQuestionId } = useParams();
@@ -47,24 +48,30 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
     }
   };
 
-  const questionTitle = question?.title;
-
   return (
-    <div>
-      <BackButton
-        onClick={handleBack}
-        text={embedded ? 'Back' : 'Back to Questions'}
-      />
-      <Typography variant="h4" gutterBottom>
-        Attempts / Logs {questionTitle && `for "${questionTitle}"`}
-      </Typography>
-      <NewButton onClick={() => handleOpen()} text="Add Log" />
-      <QuestionHeader question={question} />
-      <RecentAttemptsSummary logs={logs} />
-      <LogList logs={logs} />
+    <div className="question-log-list-container">
+      <div className="question-log-list-header">
+        <QuestionHeader question={question} />
+        <NewButton onClick={() => handleOpen()} text="Add Log" className="new-log-button" />
+      </div>
+      <div className="question-log-list-content">
+        <div className="question-log-list-main">
+          {question.content && (
+            <Box className="question-content-box">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                dangerouslySetInnerHTML={{ __html: question.content }}
+              />
+            </Box>
+          )}
+          <LogList logs={logs} />
+        </div>
+        <RecentAttemptsSummary logs={logs} className="recent-attempts-summary" />
+      </div>
 
       {error && (
-        <Typography color="error" sx={{ mb: 2 }}>
+        <Typography color="error" className="question-log-list-error">
           {error}
         </Typography>
       )}
@@ -74,7 +81,7 @@ function QuestionLogList({ questionId: propQuestionId, embedded = false, questio
         onClose={handleClose}
         onSave={handleSave}
         questionId={questionId}
-        questionTitle={questionTitle}
+        questionTitle={question?.title}
         error={error}
         saving={saving}
       />

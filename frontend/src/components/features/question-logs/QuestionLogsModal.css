@@ -1,0 +1,137 @@
+/* QuestionLogsModal styles */
+
+.question-logs-modal-paper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 8px;
+  box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
+  padding: 0;
+  outline: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  max-width: 95vw;
+  max-height: 90vh;
+  min-height: 60vh;
+}
+
+/* Responsive widths */
+@media (max-width: 599px) {
+  .question-logs-modal-paper {
+    width: 90vw;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 959px) {
+  .question-logs-modal-paper {
+    width: 600px;
+  }
+}
+
+@media (min-width: 960px) and (max-width: 1279px) {
+  .question-logs-modal-paper {
+    width: 720px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .question-logs-modal-paper {
+    width: 800px;
+  }
+}
+
+.question-logs-modal-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+.question-logs-modal-content {
+  flex: 1;
+  overflow: auto;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-height: 0;
+  max-width: 100%;
+}
+
+/* Responsive padding for content */
+@media (max-width: 599px) {
+  .question-logs-modal-content {
+    padding: 16px;
+  }
+}
+
+@media (min-width: 600px) {
+  .question-logs-modal-content {
+    padding: 24px;
+  }
+}
+
+/* Custom scrollbar styles */
+.question-logs-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.question-logs-modal-content::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.question-logs-modal-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.question-logs-modal-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.question-logs-modal-inner {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Section spacing */
+.question-logs-modal-inner > * {
+  margin-bottom: 16px;
+}
+
+.question-logs-modal-inner > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Ensure all child elements respect container width */
+.question-logs-modal-inner *,
+.question-logs-modal-inner * * {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Handle code blocks and pre-formatted text */
+.question-logs-modal-inner pre,
+.question-logs-modal-inner code {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  max-width: 100%;
+  overflow: auto;
+}
+
+/* Handle long URLs or text */
+.question-logs-modal-inner a,
+.question-logs-modal-inner span,
+.question-logs-modal-inner p,
+.question-logs-modal-inner div {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+}

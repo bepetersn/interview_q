@@ -27,7 +27,7 @@ components/
 │   │   └── index.js                  # Tag feature exports
 │   └── question-logs/        # Question logging features
 │       ├── QuestionLogList.jsx    # List and manage question attempts
-│       ├── QuestionLogsDrawer.jsx # Side drawer for logs
+│       ├── QuestionLogsModal.jsx  # Modal for question logs
 │       └── index.js               # Question logs feature exports
 ├── common/                   # Shared/reusable components (future)
 │   └── index.js              # Common component exports

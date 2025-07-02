@@ -6,7 +6,7 @@ import {
   QuestionsDisplaySection
 } from '../features/questions/index.js';
 import { TagManagementDialog } from '../features/tags/index.js';
-import { QuestionLogsDrawer } from '../features/question-logs/index.js';
+import { QuestionLogsModal } from '../features/question-logs/index.js';
 import { useQuestions } from '../../hooks/useQuestions.js';
 import { useQuestionForm } from '../../hooks/useQuestionForm.js';
 
@@ -107,7 +107,7 @@ function QuestionList() {
         onTagsUpdated={fetchTags}
       />
 
-      <QuestionLogsDrawer
+      <QuestionLogsModal
         open={logsOpen}
         onClose={() => { setLogsOpen(false); setSelectedQuestion(null); }}
         question={selectedQuestion}

@@ -1,0 +1,50 @@
+/* QuestionLogList styles */
+
+.question-log-list-error {
+  margin-bottom: 16px;
+  color: #d32f2f; /* MUI error color */
+}
+
+.question-log-list-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.question-log-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.new-log-button {
+  align-self: flex-start;
+}
+
+.recent-attempts-summary {
+  margin-bottom: 16px;
+  align-self: flex-end;
+}
+
+.question-content-box {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.question-log-list-content {
+  display: flex;
+  gap: 16px;
+}
+
+.question-log-list-main {
+  flex: 3;
+}
+
+.question-log-list-sidebar {
+  flex: 1;
+  background-color: #f0f4f8;
+  padding: 16px;
+  border-radius: 8px;
+}
