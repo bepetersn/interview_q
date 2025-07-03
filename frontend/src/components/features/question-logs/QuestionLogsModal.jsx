@@ -24,7 +24,7 @@ function QuestionLogsModal({ isOpen, onClose, question }) {
     handleClose,
     handleFormChange,
   } = useQuestionForm();
-  const { tags, putQuestion } = useQuestions();
+  const { tags, putQuestion, sources } = useQuestions();
 
   // Helper to build payload
   function buildQuestionPayload(form, tags) {
@@ -89,7 +89,7 @@ function QuestionLogsModal({ isOpen, onClose, question }) {
           onSave={handleSave}
           saving={saving}
           tags={tags}
-          sources={[]}
+          sources={sources}
           onTagsChange={handleTagsChange}
         />
         {error && (

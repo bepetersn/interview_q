@@ -13,6 +13,22 @@ function QuestionHeader({ question }) {
           {question.title}
         </Typography>
         <Box className="question-header-actions">
+          {question.source && (
+            <Chip
+              label={question.source}
+              size="small"
+              className="question-header-source-chip"
+              sx={{
+                backgroundColor: '#e3f2fd',
+                color: '#1976d2',
+                marginRight: 1,
+                '&:hover': {
+                  backgroundColor: '#bbdefb',
+                  color: '#0d47a1'
+                }
+              }}
+            />
+          )}
           {question.difficulty && (
             <Chip
               label={question.difficulty}

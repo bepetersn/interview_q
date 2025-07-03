@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const initialFormState = {
   title: '',
-  source: '',
+  source: 'CodeWars',
   content: '',
   difficulty: '',
   tag_ids: [],
@@ -17,11 +17,16 @@ export function useQuestionForm() {
 
   const handleOpen = (question = null) => {
     setQuestionBeingEdited(question);
-    const { slug, ...rest } = question || {};
-    setForm(question ? {
-      ...rest,
-      tag_ids: question.tags ? question.tags.map(t => t.id) : [],
-    } : initialFormState);
+    if (question) {
+      const { slug, ...rest } = question;
+      setForm({
+        ...rest,
+        source: question.source || '',
+        tag_ids: question.tags ? question.tags.map(t => t.id) : [],
+      });
+    } else {
+      setForm(initialFormState);
+    }
     setOpen(true);
   };
 

@@ -44,6 +44,23 @@ const QuestionActions = ({ questionId, onDelete }) => (
 const QuestionHeader = ({ question }) => (
   <Box className="question-header">
     <span className="question-title">{question.title}</span>
+    {question.source && (
+      <Chip
+        label={question.source}
+        size="small"
+        className="source-chip"
+        onClick={(e) => e.stopPropagation()}
+        sx={{
+          backgroundColor: '#e3f2fd',
+          color: '#1976d2',
+          fontSize: '0.7rem',
+          '&:hover': {
+            backgroundColor: '#bbdefb',
+            color: '#0d47a1'
+          }
+        }}
+      />
+    )}
     <Chip
       label={question.difficulty}
       size="small"
@@ -113,6 +130,7 @@ QuestionHeader.propTypes = {
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     title: PropTypes.string.isRequired,
     difficulty: PropTypes.string,
+    source: PropTypes.string,
   }).isRequired,
 };
 
@@ -152,6 +170,7 @@ QuestionListItem.propTypes = {
     title: PropTypes.string.isRequired,
     difficulty: PropTypes.string,
     content: PropTypes.string,
+    source: PropTypes.string,
     tags: PropTypes.arrayOf(
       PropTypes.oneOfType([
         PropTypes.shape({
