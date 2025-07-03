@@ -11,7 +11,6 @@ import QuestionListItem from './QuestionListItem.jsx';
 function QuestionsDisplaySection({
   questions,
   loading,
-  onEdit,
   onDelete,
   onViewLogs
 }) {
@@ -32,7 +31,6 @@ function QuestionsDisplaySection({
           <QuestionListItem
             key={q.id}
             question={q}
-            onEdit={onEdit}
             onDelete={onDelete}
             onViewLogs={onViewLogs}
           />
@@ -58,7 +56,6 @@ function QuestionsDisplaySection({
 QuestionsDisplaySection.propTypes = {
   questions: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
-  onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onViewLogs: PropTypes.func.isRequired,
 };

@@ -11,22 +11,12 @@
   --difficulty-hard: #f44336; /* Red for hard */
 }
 
-.question-title-button {
-  cursor: pointer;
-  outline: none;
-  border: none;
-  background: none;
-  padding: 0;
-  font: inherit;
+.question-title {
   font-weight: 700;
-}
-
-.question-title-button:hover {
-  text-decoration: underline;
+  color: inherit;
 }
 
 .difficulty-chip {
-  margin-left: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
   padding-left: 10px !important;
@@ -57,7 +47,6 @@
 }
 
 .tag-chip {
-  margin-right: 6px;
   background-color: var(--mui-secondary-light);
   color: var(--mui-secondary-contrastText);
   border: 1px solid var(--mui-secondary-main);
@@ -77,12 +66,59 @@
 }
 
 /* Card separation and hierarchy */
-.MuiPaper-root {
+.question-card {
   margin-bottom: 24px !important;
-  border-radius: 18px !important;
+  padding: 16px !important;
+  background: #fff !important;
+  border-radius: 12px !important;
   box-shadow: 0 4px 24px rgba(0,0,0,0.13) !important;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, transform 0.1s;
 }
-.MuiPaper-root:hover {
+
+.question-card:hover {
   box-shadow: 0 8px 32px rgba(0,0,0,0.18) !important;
+  transform: translateY(-1px);
+}
+
+/* Question metadata text */
+.question-metadata {
+  margin-left: 16px;
+  font-size: 0.95em;
+  color: #555;
+}
+
+/* Component layout classes */
+.question-list-item {
+  padding: 0 !important;
+}
+
+.question-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.question-info {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.question-tags {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tags-label {
+  font-size: 0.9em;
+  color: #666;
+  margin-right: 4px;
+}
+
+.question-actions {
+  display: flex;
+  gap: 4px;
 }
