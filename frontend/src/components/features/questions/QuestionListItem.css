@@ -26,23 +26,30 @@
 }
 
 .difficulty-chip {
-  margin-left: 8px;
-  font-weight: bold;
+  margin-left: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  border-radius: 999px !important;
+  min-width: 60px;
+  text-align: center;
+  font-size: 0.8rem;
 }
 
 .difficulty-chip.easy {
   background-color: var(--difficulty-easy);
-  color: white; /* High contrast for green */
+  color: #fff;
 }
 
 .difficulty-chip.medium {
   background-color: var(--difficulty-medium);
-  color: black; /* High contrast for amber */
+  color: #fff;
 }
 
 .difficulty-chip.hard {
   background-color: var(--difficulty-hard);
-  color: white; /* High contrast for red */
+  color: #fff;
 }
 
 .difficulty-chip .MuiChip-label {
@@ -50,17 +57,32 @@
 }
 
 .tag-chip {
-  margin-right: 4px;
+  margin-right: 6px;
   background-color: var(--mui-secondary-light);
   color: var(--mui-secondary-contrastText);
   border: 1px solid var(--mui-secondary-main);
-}
-
-.tag-chip .MuiChip-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
+  min-width: 48px;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  border-radius: 999px !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
 }
 
 .tag-chip:hover {
   background-color: var(--mui-secondary-main);
-  color: white;
+  color: #fff;
+}
+
+/* Card separation and hierarchy */
+.MuiPaper-root {
+  margin-bottom: 24px !important;
+  border-radius: 18px !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13) !important;
+  transition: box-shadow 0.2s;
+}
+.MuiPaper-root:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18) !important;
 }

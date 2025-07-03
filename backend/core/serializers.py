@@ -75,22 +75,6 @@ class QuestionSerializer(serializers.ModelSerializer):
 
         return value
 
-    def validate_content(self, value):
-        """Sanitize HTML content and remove excessive newlines"""
-        if not value:
-            return value
-
-        # Sanitize the content using our utility function
-        sanitized_content = sanitize_html(value)
-
-        # Check if content is too short after sanitization
-        if len(sanitized_content.strip()) < 3:
-            raise serializers.ValidationError(
-                "Content must be at least 3 characters long after sanitization."
-            )
-
-        return sanitized_content
-
     def validate_title(self, value):
         """Ensure that the title is always present and not empty"""
         if not value or not value.strip():
@@ -132,6 +116,12 @@ class QuestionSerializer(serializers.ModelSerializer):
             instance.tags.set(tags)
 
         return instance
+
+    def validate_content(self, value):
+        """
+        Sanitize the content field to prevent XSS attacks and clean excessive newlines.
+        """
+        return sanitize_html(value)
 
 
 class QuestionLogSerializer(serializers.ModelSerializer):

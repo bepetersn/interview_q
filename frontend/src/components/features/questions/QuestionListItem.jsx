@@ -19,23 +19,23 @@ function QuestionListItem({ question, onDelete, onViewLogs }) {
   };
 
   return (
-    <Paper elevation={3} sx={{ mb: 2, p: 1.5, background: '#ffffff', borderRadius: 2, boxShadow: '0 2px 12px rgba(0,0,0,0.15)' }}>
+    <Paper elevation={4} sx={{ mb: 3, p: 2, background: '#fff', borderRadius: 3, boxShadow: '0 4px 24px rgba(0,0,0,0.13)' }}>
       <ListItem key={question.id} alignItems="flex-start" disableGutters secondaryAction={
         <Box>
           <IconButton edge="end" onClick={() => onViewLogs(question.id)} title="View Attempts"><ListAlt /></IconButton>
           <IconButton edge="end" onClick={() => onDelete(question.id)} title="Delete Question"><Delete /></IconButton>
         </Box>
-      }>
+      } sx={{ p: 0 }}>
         <ListItemText
           primary={
             <Box display="flex" alignItems="center">
               <button className="question-title-button" onClick={() => onViewLogs(question.id)}>
                 {question.title}
               </button>
-              <Chip label={question.difficulty} size="small" className={`difficulty-chip ${getDifficultyClass(question.difficulty)}`} sx={{ ml: 1 }} />
+              <Chip label={question.difficulty} size="small" className={`difficulty-chip ${getDifficultyClass(question.difficulty)}`} />
             </Box>}
           secondary={
-            <Box mt={1}>
+            <Box mt={0.5} display="flex" alignItems="center">
               <span>
                 Tags:&nbsp;
                 {question.tags && question.tags.map(tag => (
@@ -48,7 +48,7 @@ function QuestionListItem({ question, onDelete, onViewLogs }) {
                   />
                 ))}
               </span>
-              <span style={{ marginLeft: '8px' }}>
+              <span style={{ marginLeft: '16px', fontSize: '0.95em', color: '#555' }}>
                 Attempts: {question.attempts_count || 0}, Last: {question.last_attempted_at ? new Date(question.last_attempted_at).toLocaleDateString() : 'Never'}
               </span>
             </Box>

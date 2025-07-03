@@ -3,8 +3,10 @@
 .add-question-button {
   margin-bottom: 2rem;
   margin-left: auto;
+  margin-right: 0;
   background-color: #1976d2;
   color: #ffffff;
+  align-self: flex-end;
 }
 
 .add-question-button:hover {
@@ -16,6 +18,7 @@
   margin-left: auto;
   margin-right: auto;
   display: block;
+  align-self: center;
 }
 
 .error-message {
