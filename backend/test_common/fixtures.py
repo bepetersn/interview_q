@@ -79,7 +79,10 @@ def logged_in_session(django_server_url, registered_user):
     assert resp.status_code in (200, 201, 204), f"Auth failed: {resp.text}"
     csrf_token = session.cookies.get("csrftoken")
     if csrf_token:
-        session.headers.update({"X-CSRFToken": csrf_token, "Referer": BASE_URL})
+        # Use https://localhost:8000 as the Referer to match BASE_URL domain
+        session.headers.update(
+            {"X-CSRFToken": csrf_token, "Referer": "https://localhost:8000"}
+        )
     return session, username
 
 

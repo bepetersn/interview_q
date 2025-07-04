@@ -4,19 +4,27 @@ from django.db import models
 from .utils import SlugGenerator
 
 
-class Tag(models.Model):
+class BaseModel(models.Model):
+    """Base model with common fields and behavior"""
+
+    created_at = models.DateTimeField(
+        auto_now_add=True, help_text="Timestamp when the record was created"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True, help_text="Timestamp when the record was last updated"
+    )
+    is_active = models.BooleanField(
+        default=True, help_text="Indicates if the record is active"
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Tag(BaseModel):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(
         blank=True, help_text="Detailed description of the tag"
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True, help_text="Timestamp when the tag was created"
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True, help_text="Timestamp when the tag was last updated"
-    )
-    is_active = models.BooleanField(
-        default=True, help_text="Indicates if the tag is active"
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -32,10 +40,10 @@ class Tag(models.Model):
         return f"{self.name}"
 
 
-class Question(models.Model):
+class Question(BaseModel):
+    """Interview question model with automatic slug generation"""
 
     # Intrinsic / Essential data
-
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -67,20 +75,7 @@ class Question(models.Model):
         Tag, blank=True, related_name="questions", help_text="Tags for the question"
     )
 
-    # Time tracking / Status
-
-    created_at = models.DateTimeField(
-        auto_now_add=True, help_text="Timestamp when the question was created"
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True, help_text="Timestamp when the question was last updated"
-    )
-    is_active = models.BooleanField(
-        default=True, help_text="Indicates if the question is active"
-    )
-
     # QuestionLog aggregation data
-
     attempts_count = models.PositiveIntegerField(default=0)
     solved_count = models.PositiveIntegerField(
         default=0, help_text="Number of times this question has been solved"
@@ -92,17 +87,19 @@ class Question(models.Model):
     class Meta:
         ordering = ["-created_at", "title"]
 
-    def __init__(self, *args, **kwargs):
-        # Remove slug from kwargs to prevent user-supplied slug
-        kwargs.pop("slug", None)
-        super().__init__(*args, **kwargs)
-        self.slug = SlugGenerator.generate_unique_slug(self.__class__, self.title)
+    def save(self, *args, **kwargs):
+        """Override save to generate slug before saving"""
+        if not self.slug:
+            self.slug = SlugGenerator.generate_unique_slug(self.__class__, self.title)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.title} [{self.slug}]"
 
 
 class QuestionLog(models.Model):
+    """Log of attempts on questions"""
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

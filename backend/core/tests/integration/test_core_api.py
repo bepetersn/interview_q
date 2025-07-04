@@ -26,9 +26,12 @@ def cleanup_main_user_questions(logged_in_session):
     session, _ = logged_in_session
     question_api = f"{BASE_URL}/questions/"
     # Delete all questions for the user (logs will be deleted via cascade)
-    questions = session.get(question_api, verify=REQUESTS_VERIFY).json()
-    for q in questions:
-        session.delete(f"{question_api}{q['id']}/", verify=REQUESTS_VERIFY)
+    questions_response = session.get(question_api, verify=REQUESTS_VERIFY)
+    if questions_response.status_code == 200:
+        questions = questions_response.json()
+        for q in questions:
+            if isinstance(q, dict) and "id" in q:
+                session.delete(f"{question_api}{q['id']}/", verify=REQUESTS_VERIFY)
 
 
 @pytest.mark.integration
