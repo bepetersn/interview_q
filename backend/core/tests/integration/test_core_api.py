@@ -157,7 +157,7 @@ def test_list_scoped_to_user(
 
     # Create another user and add a question log for them
     other_username = "other" + str(int(time.time()))
-    other_password = "pass"
+    other_password = "testpass123"
     other_session, other_cleanup = create_and_cleanup_user(
         other_username, other_password
     )

@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv  # Added for python-dotenv
+from rest_framework.authentication import SessionAuthentication
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -224,12 +225,28 @@ CACHES = {
     }
 }
 
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    """
+    SessionAuthentication that doesn't enforce CSRF checks for API endpoints.
+    This is commonly used for API-only applications where CSRF protection
+    is handled differently or not needed for API calls.
+    """
+
+    def enforce_csrf(self, request):
+        return  # Skip CSRF validation for API calls
+
+
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
         "rest_framework.parsers.FormParser",
         "rest_framework.parsers.MultiPartParser",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "backend.settings.CsrfExemptSessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
     ],
 }
 

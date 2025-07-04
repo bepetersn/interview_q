@@ -1,6 +1,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
+from .views.health import health
 from .views.question import QuestionViewSet
 from .views.question_log import (
     QuestionLogListCreateView,
@@ -12,6 +13,7 @@ router = DefaultRouter()
 router.register(r"questions", QuestionViewSet, basename="question")
 
 urlpatterns = [
+    path("health/", health, name="health"),
     path(
         "questions/<int:question_id>/logs/",
         QuestionLogListCreateView.as_view(),
