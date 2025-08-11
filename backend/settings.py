@@ -226,6 +226,11 @@ CACHES = {
 }
 
 
+# Temporary fix for HTTPS while /health endpoint is having issues
+# This should be set to True in production
+SECURE_SSL_REDIRECT = False
+
+
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     """
     SessionAuthentication that doesn't enforce CSRF checks for API endpoints.
