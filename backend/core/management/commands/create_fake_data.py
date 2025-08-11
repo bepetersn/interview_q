@@ -17,7 +17,7 @@ class Command(BaseCommand):
         tags = []
         for _ in range(10):
             tag_name = fake.word()
-            tag, created = Tag.objects.get_or_create(name=tag_name)
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
             tags.append(tag)
 
         # Create Questions
