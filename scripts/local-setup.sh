@@ -5,5 +5,4 @@
 sudo apt-get install jq
 npm install snyk -g
 sudo apt-get install -y python3-psycopg2 libpq-dev
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
+source ../venv/bin/activate

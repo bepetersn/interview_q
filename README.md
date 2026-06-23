@@ -20,8 +20,8 @@ This project is a full-stack application for managing programming interview ques
 ## Getting Started
 
 - **Backend:**
-  - Install OS dependencies from `setup.sh`.
-  - Install dependencies from `requirements.txt`.
+  - Install OS dependencies from `scripts/local-setup.sh`.
+  - Install dependencies from `requirements.txt` and `requirements.dev.txt`.
   - Run migrations and seed data with `python manage.py create_fake_data`.
   - Start the server with `python manage.py runserver`.
   - To run with Datadog APM, set the variables in `.env.example` and set
