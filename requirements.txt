@@ -6,7 +6,7 @@ cattrs<24.2
 certifi==2025.6.15
 cffi==1.17.1
 charset-normalizer==3.4.2
-cryptography==45.0.4
+cryptography==46.0.5
 ddsketch==3.0.1
 ddtrace==2.1.0
 Django==5.2.1
