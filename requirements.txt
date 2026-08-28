@@ -42,5 +42,5 @@ uritemplate==4.2.0
 urllib3==2.5.0
 whitenoise==6.6.0
 wrapt==1.17.2
-xmltodict==0.14.2
+xmltodict==0.15.0
 zipp==3.23.0
